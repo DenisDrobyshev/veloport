@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}{{ article.title }} — Veloport{% endblock %}
+{% block meta_description %}{{ article.excerpt }}{% endblock %}
+
+{% block content %}
+<article class="max-w-3xl mx-auto px-4 py-8">
+  <nav class="text-sm text-slate-400 mb-3"><a href="{% url 'content:blog' %}" class="hover:text-brand">Блог</a><span class="mx-1">/</span><span class="text-ink">{{ article.get_category_display }}</span></nav>
+  <h1 class="text-3xl font-extrabold leading-tight">{{ article.title }}</h1>
+  <div class="mt-2 text-sm text-slate-400">{{ article.published_at|date:"d.m.Y" }} · ⏱ {{ article.reading_time }} мин чтения</div>
+  {% if article.cover %}<img src="{{ article.cover.url }}" class="w-full rounded-2xl mt-5">{% endif %}
+  <div class="prose max-w-none mt-6 text-slate-700 leading-relaxed">{{ article.body|linebreaks }}</div>
+
+  {% if similar %}
+  <div class="mt-12">
+    <h2 class="font-bold text-lg mb-3">Читайте также</h2>
+    <div class="space-y-2">
+      {% for s in similar %}<a href="{{ s.get_absolute_url }}" class="block bg-white rounded-xl ring-1 ring-slate-100 p-4 hover:ring-brand"><div class="font-semibold">{{ s.title }}</div><div class="text-sm text-slate-500 line-clamp-1">{{ s.excerpt }}</div></a>{% endfor %}
+    </div>
+  </div>
+  {% endif %}
+</article>
+{% endblock %}

@@ -1,0 +1,277 @@
+{% extends "base.html" %}
+{% load shop_extras %}
+{% block title %}{{ product.title }} — Veloport{% endblock %}
+{% block meta_description %}{{ product.short_description|default:product.title }}{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 py-6">
+  <nav class="text-sm text-slate-400 mb-4">
+    <a href="{% url 'core:home' %}" class="hover:text-brand">Главная</a><span class="mx-1">/</span>
+    <a href="{{ product.category.get_absolute_url }}" class="hover:text-brand">{{ product.category.name }}</a><span class="mx-1">/</span>
+    <span class="text-ink">{{ product.title }}</span>
+  </nav>
+
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+    <!-- Галерея -->
+    <div x-data="{ main: '{% if product.main_image %}{{ product.main_image.url }}{% endif %}' }">
+      <div class="aspect-square bg-white rounded-2xl ring-1 ring-slate-100 grid place-items-center overflow-hidden">
+        <template x-if="main"><img :src="main" alt="{{ product.title }}" class="w-full h-full object-contain p-4"></template>
+        {% if not product.main_image %}<div class="text-8xl">{% if product.product_type == 'bike' or product.product_type == 'ebike' %}🚲{% elif product.product_type == 'apparel' %}👕{% else %}🔧{% endif %}</div>{% endif %}
+      </div>
+      {% if product.images.count > 1 %}
+      <div class="mt-3 flex gap-2 overflow-auto no-scrollbar">
+        {% for img in product.images.all %}
+        <button @click="main='{{ img.image.url }}'" class="w-20 h-20 shrink-0 rounded-xl ring-1 ring-slate-200 hover:ring-brand overflow-hidden">
+          <img src="{{ img.image.url }}" class="w-full h-full object-cover">
+        </button>
+        {% endfor %}
+      </div>
+      {% endif %}
+    </div>
+
+    <!-- Инфо -->
+    <div>
+      <div class="flex items-center gap-2 mb-2">
+        {% if product.is_new %}<span class="bg-brand text-white text-xs font-bold px-2 py-0.5 rounded">NEW</span>{% endif %}
+        {% if product.is_bestseller %}<span class="bg-ink text-white text-xs font-bold px-2 py-0.5 rounded">ХИТ</span>{% endif %}
+        {% if product.brand %}<a href="{{ product.brand.get_absolute_url }}" class="text-sm text-slate-500 hover:text-brand">{{ product.brand.name }}</a>{% endif %}
+      </div>
+      <h1 class="text-2xl md:text-3xl font-extrabold leading-tight">{{ product.title }}</h1>
+
+      <div class="mt-2 flex items-center gap-3 text-sm">
+        <span class="text-amber-400 text-lg">{{ product.rating|stars }}</span>
+        <a href="#reviews" class="text-slate-500 hover:text-brand">{{ product.reviews_count }} отзывов</a>
+        <span class="text-slate-300">·</span>
+        <span class="text-slate-500">Арт. {{ product.sku }}</span>
+      </div>
+
+      {% if bike %}
+      <div class="mt-5 grid grid-cols-2 sm:grid-cols-3 gap-2">
+        {% if bike.wheel_size %}<div class="bg-white ring-1 ring-slate-100 rounded-xl px-3 py-2"><div class="text-xs text-slate-400">Колёса</div><div class="font-semibold text-sm">{{ bike.get_wheel_size_display }}</div></div>{% endif %}
+        {% if bike.frame_material %}<div class="bg-white ring-1 ring-slate-100 rounded-xl px-3 py-2"><div class="text-xs text-slate-400">Рама</div><div class="font-semibold text-sm">{{ bike.get_frame_material_display }}</div></div>{% endif %}
+        {% if bike.frame_size %}<div class="bg-white ring-1 ring-slate-100 rounded-xl px-3 py-2"><div class="text-xs text-slate-400">Ростовка</div><div class="font-semibold text-sm">{{ bike.get_frame_size_display }}</div></div>{% endif %}
+        {% if bike.brake_type %}<div class="bg-white ring-1 ring-slate-100 rounded-xl px-3 py-2"><div class="text-xs text-slate-400">Тормоза</div><div class="font-semibold text-sm">{{ bike.get_brake_type_display }}</div></div>{% endif %}
+        {% if bike.speeds %}<div class="bg-white ring-1 ring-slate-100 rounded-xl px-3 py-2"><div class="text-xs text-slate-400">Скоростей</div><div class="font-semibold text-sm">{{ bike.speeds }}</div></div>{% endif %}
+        {% if bike.weight_kg %}<div class="bg-white ring-1 ring-slate-100 rounded-xl px-3 py-2"><div class="text-xs text-slate-400">Вес</div><div class="font-semibold text-sm">{{ bike.weight_kg }} кг</div></div>{% endif %}
+      </div>
+      {% endif %}
+
+      <!-- Покупка -->
+      <div class="mt-6 bg-white rounded-2xl ring-1 ring-slate-100 p-5"
+           x-data="{ variant: '{% if variants %}{{ variants.0.id }}{% endif %}', qty: 1 }">
+        <div class="flex items-end gap-3">
+          <span class="text-3xl font-extrabold">{{ product.price|rub }}</span>
+          {% if product.has_discount %}
+            <span class="text-lg text-slate-400 line-through mb-1">{{ product.old_price|rub }}</span>
+            <span class="mb-1.5 bg-accent/10 text-accent text-sm font-bold px-2 py-0.5 rounded">Выгода {{ product.savings|rub }}</span>
+          {% endif %}
+        </div>
+        <div class="mt-1 text-sm {% if product.in_stock %}text-brand{% else %}text-amber-600{% endif %}">
+          {% if product.in_stock %}● В наличии{% else %}○ Под заказ{% endif %}
+        </div>
+
+        {% if variants %}
+        <div class="mt-4">
+          <div class="text-sm font-medium mb-2">{{ variants.0.group }}:</div>
+          <div class="flex flex-wrap gap-2">
+            {% for v in variants %}
+            <button type="button" @click="variant='{{ v.id }}'"
+                    :class="variant=='{{ v.id }}' ? 'ring-2 ring-brand bg-brand-50' : 'ring-1 ring-slate-200'"
+                    class="px-3 py-1.5 rounded-lg text-sm font-medium">{{ v.value }}</button>
+            {% endfor %}
+          </div>
+        </div>
+        {% endif %}
+
+        <div class="mt-5 flex items-center gap-3">
+          <div class="flex items-center rounded-xl ring-1 ring-slate-200 h-12">
+            <button type="button" @click="qty = Math.max(1, qty-1)" class="w-11 h-full text-lg">−</button>
+            <span class="w-8 text-center font-semibold" x-text="qty"></span>
+            <button type="button" @click="qty = qty+1" class="w-11 h-full text-lg">+</button>
+          </div>
+          <form hx-post="{% url 'cart:add' product.id %}" hx-target="#toast" hx-swap="beforeend" class="flex-1">
+            <input type="hidden" name="qty" :value="qty">
+            {% if variants %}<input type="hidden" name="variant" :value="variant">{% endif %}
+            <button class="w-full h-12 rounded-xl bg-brand hover:bg-brand-dark text-white font-bold transition">В корзину 🛒</button>
+          </form>
+        </div>
+
+        <div class="mt-4 grid grid-cols-2 gap-3 text-xs text-slate-500">
+          <div>🚚 Доставка от 1 дня</div>
+          <div>🛡 Гарантия {{ product.warranty_months }} мес.</div>
+          <div>🔧 Бесплатная предпродажная сборка</div>
+          <div>↩️ Возврат 14 дней</div>
+        </div>
+      </div>
+
+      <!-- Резерв в магазине -->
+      {% if stocks %}
+      <div class="mt-4 bg-white rounded-2xl ring-1 ring-slate-100 p-5" x-data="{ open:false }">
+        <div class="flex items-center justify-between">
+          <div>
+            <div class="font-semibold">В наличии в {{ stocks|length }} магазин(ах)</div>
+            <div class="text-sm text-slate-500">Можно забрать сегодня или зарезервировать</div>
+          </div>
+          <button @click="open=!open" class="text-brand text-sm font-medium">Наличие ▾</button>
+        </div>
+        <div x-show="open" x-cloak class="mt-3 divide-y divide-slate-100">
+          {% for s in stocks %}
+          <div class="py-2 flex items-center justify-between text-sm">
+            <div><b>{{ s.store.name }}</b> · {{ s.store.city }}</div>
+            <div class="text-brand">{{ s.status }}</div>
+          </div>
+          {% endfor %}
+          <form hx-post="{% url 'stores:reserve' product.id %}" hx-target="this" hx-swap="outerHTML" class="pt-3 grid grid-cols-2 gap-2">
+            <select name="store" required class="col-span-2 h-10 px-3 rounded-lg border border-slate-200 text-sm">
+              {% for s in stocks %}<option value="{{ s.store.id }}">{{ s.store.name }} ({{ s.store.city }})</option>{% endfor %}
+            </select>
+            <input name="name" placeholder="Ваше имя" class="h-10 px-3 rounded-lg border border-slate-200 text-sm">
+            <input name="phone" placeholder="Телефон" required class="h-10 px-3 rounded-lg border border-slate-200 text-sm">
+            <button class="col-span-2 h-10 rounded-lg bg-ink text-white font-semibold text-sm">Зарезервировать бесплатно</button>
+          </form>
+        </div>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Табы -->
+  <div class="mt-10" x-data="{ tab: 'specs' }">
+    <div class="flex gap-1 border-b border-slate-200 overflow-auto no-scrollbar">
+      <button @click="tab='specs'" :class="tab=='specs' ? 'border-brand text-brand' : 'border-transparent text-slate-500'" class="px-4 py-3 border-b-2 font-semibold whitespace-nowrap">Характеристики</button>
+      <button @click="tab='desc'" :class="tab=='desc' ? 'border-brand text-brand' : 'border-transparent text-slate-500'" class="px-4 py-3 border-b-2 font-semibold whitespace-nowrap">Описание</button>
+      <button @click="tab='reviews'" :class="tab=='reviews' ? 'border-brand text-brand' : 'border-transparent text-slate-500'" class="px-4 py-3 border-b-2 font-semibold whitespace-nowrap">Отзывы ({{ product.reviews_count }})</button>
+      <button @click="tab='questions'" :class="tab=='questions' ? 'border-brand text-brand' : 'border-transparent text-slate-500'" class="px-4 py-3 border-b-2 font-semibold whitespace-nowrap">Вопросы</button>
+    </div>
+
+    <div class="py-6">
+      <!-- Характеристики -->
+      <div x-show="tab=='specs'" class="max-w-3xl">
+        {% if bike %}
+        <h3 class="font-bold mb-2">Велоспецификация</h3>
+        <table class="w-full text-sm mb-6">
+          <tbody class="divide-y divide-slate-100">
+            {% if bike.model_year %}<tr><td class="py-2 text-slate-500 w-1/2">Год модели</td><td class="py-2 font-medium">{{ bike.model_year }}</td></tr>{% endif %}
+            {% if bike.wheel_size %}<tr><td class="py-2 text-slate-500">Размер колёс</td><td class="py-2 font-medium">{{ bike.get_wheel_size_display }}</td></tr>{% endif %}
+            {% if bike.frame_material %}<tr><td class="py-2 text-slate-500">Материал рамы</td><td class="py-2 font-medium">{{ bike.get_frame_material_display }}</td></tr>{% endif %}
+            {% if bike.frame_size %}<tr><td class="py-2 text-slate-500">Ростовка рамы</td><td class="py-2 font-medium">{{ bike.get_frame_size_display }}</td></tr>{% endif %}
+            {% if bike.brake_type %}<tr><td class="py-2 text-slate-500">Тормоза</td><td class="py-2 font-medium">{{ bike.get_brake_type_display }}</td></tr>{% endif %}
+            {% if bike.suspension %}<tr><td class="py-2 text-slate-500">Амортизация</td><td class="py-2 font-medium">{{ bike.get_suspension_display }}</td></tr>{% endif %}
+            <tr><td class="py-2 text-slate-500">Кол-во скоростей</td><td class="py-2 font-medium">{{ bike.speeds }}</td></tr>
+            {% if bike.fork_travel %}<tr><td class="py-2 text-slate-500">Ход вилки</td><td class="py-2 font-medium">{{ bike.fork_travel }} мм</td></tr>{% endif %}
+            {% if bike.weight_kg %}<tr><td class="py-2 text-slate-500">Вес</td><td class="py-2 font-medium">{{ bike.weight_kg }} кг</td></tr>{% endif %}
+            <tr><td class="py-2 text-slate-500">Пол/возраст</td><td class="py-2 font-medium">{{ bike.get_gender_display }}</td></tr>
+          </tbody>
+        </table>
+        {% endif %}
+        {% for group, items in spec_groups.items %}
+        <h3 class="font-bold mb-2">{{ group }}</h3>
+        <table class="w-full text-sm mb-6"><tbody class="divide-y divide-slate-100">
+          {% for s in items %}<tr><td class="py-2 text-slate-500 w-1/2">{{ s.name }}</td><td class="py-2 font-medium">{{ s.value }}</td></tr>{% endfor %}
+        </tbody></table>
+        {% endfor %}
+        {% if not bike and not spec_groups %}<p class="text-slate-500">Характеристики уточняются.</p>{% endif %}
+      </div>
+
+      <!-- Описание -->
+      <div x-show="tab=='desc'" x-cloak class="prose max-w-3xl text-slate-700 leading-relaxed">
+        {{ product.description|default:"Описание скоро появится."|linebreaks }}
+      </div>
+
+      <!-- Отзывы -->
+      <div x-show="tab=='reviews'" x-cloak id="reviews" class="max-w-3xl">
+        <div class="flex items-center gap-6 mb-6 bg-white rounded-2xl ring-1 ring-slate-100 p-5">
+          <div class="text-center">
+            <div class="text-4xl font-extrabold">{{ product.rating }}</div>
+            <div class="text-amber-400">{{ product.rating|stars }}</div>
+            <div class="text-xs text-slate-400 mt-1">{{ product.reviews_count }} отзывов</div>
+          </div>
+          <div class="flex-1 space-y-1">
+            {% for star, cnt in rating_dist.items %}
+            <div class="flex items-center gap-2 text-xs">
+              <span class="w-6 text-slate-500">{{ star }}★</span>
+              <div class="flex-1 h-2 bg-slate-100 rounded"><div class="h-2 bg-amber-400 rounded" style="width: {% if product.reviews_count %}{% widthratio cnt product.reviews_count 100 %}{% else %}0{% endif %}%"></div></div>
+              <span class="w-6 text-slate-400 text-right">{{ cnt }}</span>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+
+        <div class="space-y-4 mb-8">
+          {% for r in reviews %}
+          <div class="bg-white rounded-2xl ring-1 ring-slate-100 p-5">
+            <div class="flex items-center justify-between">
+              <div class="font-semibold">{{ r.name }}</div>
+              <div class="text-amber-400 text-sm">{{ r.rating|stars }}</div>
+            </div>
+            <div class="text-xs text-slate-400">{{ r.created_at|date:"d.m.Y" }}</div>
+            {% if r.pros %}<p class="mt-2 text-sm"><b class="text-brand">+ </b>{{ r.pros }}</p>{% endif %}
+            {% if r.cons %}<p class="text-sm"><b class="text-accent">− </b>{{ r.cons }}</p>{% endif %}
+            {% if r.text %}<p class="mt-1 text-sm text-slate-700">{{ r.text }}</p>{% endif %}
+          </div>
+          {% empty %}
+          <p class="text-slate-500">Пока нет отзывов. Будьте первым!</p>
+          {% endfor %}
+        </div>
+
+        <div class="bg-white rounded-2xl ring-1 ring-slate-100 p-5">
+          <h3 class="font-bold mb-3">Оставить отзыв</h3>
+          <form method="post" action="{% url 'reviews:add_review' product.id %}" class="space-y-3" x-data="{ rating: 5 }">
+            {% csrf_token %}
+            <div class="flex items-center gap-1 text-2xl">
+              <template x-for="i in 5"><span @click="rating=i" :class="i<=rating ? 'text-amber-400' : 'text-slate-300'" class="cursor-pointer">★</span></template>
+              <input type="hidden" name="rating" :value="rating">
+            </div>
+            {% if not user.is_authenticated %}<input name="name" placeholder="Ваше имя" class="w-full h-10 px-3 rounded-lg border border-slate-200 text-sm">{% endif %}
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <input name="pros" placeholder="Достоинства" class="h-10 px-3 rounded-lg border border-slate-200 text-sm">
+              <input name="cons" placeholder="Недостатки" class="h-10 px-3 rounded-lg border border-slate-200 text-sm">
+            </div>
+            <textarea name="text" rows="3" placeholder="Комментарий" class="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm"></textarea>
+            <button class="h-10 px-6 rounded-lg bg-brand text-white font-semibold text-sm">Отправить отзыв</button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Вопросы -->
+      <div x-show="tab=='questions'" x-cloak id="questions" class="max-w-3xl">
+        <div class="space-y-4 mb-8">
+          {% for q in questions %}
+          <div class="bg-white rounded-2xl ring-1 ring-slate-100 p-5">
+            <div class="font-semibold">❓ {{ q.name }} <span class="text-xs text-slate-400 font-normal">{{ q.created_at|date:"d.m.Y" }}</span></div>
+            <p class="text-sm text-slate-700 mt-1">{{ q.text }}</p>
+            {% for a in q.answers.all %}
+            <div class="mt-3 ml-4 pl-3 border-l-2 border-brand">
+              <div class="text-sm font-semibold text-brand">{{ a.name }}{% if a.is_staff_answer %} · магазин{% endif %}</div>
+              <p class="text-sm text-slate-700">{{ a.text }}</p>
+            </div>
+            {% endfor %}
+          </div>
+          {% empty %}
+          <p class="text-slate-500">Вопросов пока нет. Задайте первым!</p>
+          {% endfor %}
+        </div>
+        <div class="bg-white rounded-2xl ring-1 ring-slate-100 p-5">
+          <h3 class="font-bold mb-3">Задать вопрос</h3>
+          <form method="post" action="{% url 'reviews:add_question' product.id %}" class="space-y-3">
+            {% csrf_token %}
+            {% if not user.is_authenticated %}<input name="name" placeholder="Ваше имя" class="w-full h-10 px-3 rounded-lg border border-slate-200 text-sm">{% endif %}
+            <textarea name="text" rows="3" required placeholder="Ваш вопрос о товаре" class="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm"></textarea>
+            <button class="h-10 px-6 rounded-lg bg-brand text-white font-semibold text-sm">Отправить вопрос</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- С этим покупают -->
+  {% if related %}
+  <div class="mt-12">
+    <h2 class="text-xl font-extrabold mb-4">Похожие товары</h2>
+    <div class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4">
+      {% for product in related %}{% include "partials/product_card.html" %}{% endfor %}
+    </div>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

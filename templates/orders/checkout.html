@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% load shop_extras widget_tweaks %}
+{% block title %}Оформление заказа — Veloport{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 py-6">
+  <h1 class="text-2xl md:text-3xl font-extrabold mb-6">Оформление заказа</h1>
+
+  <form method="post" x-data="{ delivery: '{{ form.delivery_method.value|default:'pickup' }}' }"
+        class="grid grid-cols-1 lg:grid-cols-[1fr_360px] gap-6">
+    {% csrf_token %}
+    <div class="space-y-5">
+      <!-- Контакты -->
+      <div class="bg-white rounded-2xl ring-1 ring-slate-100 p-5">
+        <h2 class="font-bold mb-4">1. Контактные данные</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div><label class="text-sm text-slate-500">Имя *</label>{% render_field form.first_name class="w-full h-11 px-3 rounded-xl border border-slate-200 focus:border-brand outline-none" %}</div>
+          <div><label class="text-sm text-slate-500">Фамилия</label>{% render_field form.last_name class="w-full h-11 px-3 rounded-xl border border-slate-200 focus:border-brand outline-none" %}</div>
+          <div><label class="text-sm text-slate-500">Телефон *</label>{% render_field form.phone class="w-full h-11 px-3 rounded-xl border border-slate-200 focus:border-brand outline-none" %}</div>
+          <div><label class="text-sm text-slate-500">Email</label>{% render_field form.email class="w-full h-11 px-3 rounded-xl border border-slate-200 focus:border-brand outline-none" %}</div>
+        </div>
+      </div>
+
+      <!-- Доставка -->
+      <div class="bg-white rounded-2xl ring-1 ring-slate-100 p-5">
+        <h2 class="font-bold mb-4">2. Доставка</h2>
+        {% render_field form.delivery_method x-model="delivery" class="w-full h-11 px-3 rounded-xl border border-slate-200 focus:border-brand outline-none" %}
+        <div x-show="delivery=='pickup'" class="mt-3">
+          <label class="text-sm text-slate-500">Магазин самовывоза</label>
+          {% render_field form.store class="w-full h-11 px-3 rounded-xl border border-slate-200 focus:border-brand outline-none" %}
+        </div>
+        <div x-show="delivery!='pickup'" x-cloak class="mt-3 grid grid-cols-2 gap-3">
+          <div class="col-span-2"><label class="text-sm text-slate-500">Город</label>{% render_field form.city class="w-full h-11 px-3 rounded-xl border border-slate-200 focus:border-brand outline-none" %}</div>
+          <div class="col-span-2"><label class="text-sm text-slate-500">Улица</label>{% render_field form.street class="w-full h-11 px-3 rounded-xl border border-slate-200 focus:border-brand outline-none" %}</div>
+          <div><label class="text-sm text-slate-500">Дом</label>{% render_field form.house class="w-full h-11 px-3 rounded-xl border border-slate-200 focus:border-brand outline-none" %}</div>
+          <div><label class="text-sm text-slate-500">Квартира</label>{% render_field form.apartment class="w-full h-11 px-3 rounded-xl border border-slate-200 focus:border-brand outline-none" %}</div>
+          <div><label class="text-sm text-slate-500">Индекс</label>{% render_field form.postal_code class="w-full h-11 px-3 rounded-xl border border-slate-200 focus:border-brand outline-none" %}</div>
+        </div>
+      </div>
+
+      <!-- Оплата -->
+      <div class="bg-white rounded-2xl ring-1 ring-slate-100 p-5">
+        <h2 class="font-bold mb-4">3. Оплата</h2>
+        {% render_field form.payment_method class="w-full h-11 px-3 rounded-xl border border-slate-200 focus:border-brand outline-none" %}
+        <div class="mt-3"><label class="text-sm text-slate-500">Комментарий к заказу</label>{% render_field form.comment class="w-full px-3 py-2 rounded-xl border border-slate-200 focus:border-brand outline-none" %}</div>
+      </div>
+
+      {% if form.errors %}
+      <div class="bg-red-50 text-red-700 rounded-xl p-4 text-sm">
+        {% for field in form %}{% for e in field.errors %}<div>{{ field.label }}: {{ e }}</div>{% endfor %}{% endfor %}
+        {% for e in form.non_field_errors %}<div>{{ e }}</div>{% endfor %}
+      </div>
+      {% endif %}
+    </div>
+
+    <!-- Сводка -->
+    <div class="lg:sticky lg:top-24 h-fit bg-white rounded-2xl ring-1 ring-slate-100 p-5">
+      <h3 class="font-bold text-lg mb-4">Ваш заказ</h3>
+      <div class="space-y-3 max-h-64 overflow-auto no-scrollbar mb-4">
+        {% for item in cart %}
+        <div class="flex gap-3 text-sm">
+          <div class="w-12 h-12 shrink-0 rounded-lg bg-slate-50 grid place-items-center overflow-hidden">
+            {% if item.product.main_image %}<img src="{{ item.product.main_image.url }}" class="w-full h-full object-cover">{% else %}🚲{% endif %}
+          </div>
+          <div class="flex-1 min-w-0"><div class="line-clamp-1">{{ item.product.title }}</div><div class="text-slate-400">{{ item.qty }} × {{ item.price|rub }}</div></div>
+          <div class="font-semibold whitespace-nowrap">{{ item.total|rub }}</div>
+        </div>
+        {% endfor %}
+      </div>
+      <div class="border-t border-slate-100 pt-3 space-y-2 text-sm">
+        <div class="flex justify-between"><span class="text-slate-500">Товары</span><span>{{ cart.total|rub }}</span></div>
+        <div class="flex justify-between"><span class="text-slate-500">Доставка</span><span>{% if cart.shipping %}{{ cart.shipping|rub }}{% else %}<span class="text-brand">Бесплатно</span>{% endif %}</span></div>
+      </div>
+      <div class="border-t border-slate-100 mt-3 pt-3 flex justify-between items-center">
+        <span class="font-semibold">Итого</span><span class="text-2xl font-extrabold">{{ cart.grand_total|rub }}</span>
+      </div>
+      <button class="mt-4 w-full h-12 rounded-xl bg-accent hover:bg-accent-dark text-white font-bold">Подтвердить заказ</button>
+      <p class="mt-3 text-xs text-slate-400 text-center">Нажимая кнопку, вы соглашаетесь с условиями оферты</p>
+    </div>
+  </form>
+</div>
+{% endblock %}

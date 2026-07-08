@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% load shop_extras %}
+{% block title %}{{ title }} — Veloport{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 py-6" x-data="{ fopen: false }">
+
+  <nav class="text-sm text-slate-400 mb-3">
+    <a href="{% url 'core:home' %}" class="hover:text-brand">Главная</a>
+    <span class="mx-1">/</span>
+    {% if current_category %}
+      {% for anc in current_category.get_ancestors %}<a href="{{ anc.get_absolute_url }}" class="hover:text-brand">{{ anc.name }}</a><span class="mx-1">/</span>{% endfor %}
+      <span class="text-ink">{{ current_category.name }}</span>
+    {% elif current_brand %}
+      <span class="text-ink">Бренд: {{ current_brand.name }}</span>
+    {% else %}
+      <span class="text-ink">Каталог</span>
+    {% endif %}
+  </nav>
+
+  <h1 class="text-2xl md:text-3xl font-extrabold mb-5">{{ title }}</h1>
+
+  <form hx-get="{{ request.path }}" hx-target="#product-grid" hx-swap="innerHTML"
+        hx-push-url="true" hx-trigger="change, submit" hx-indicator="#grid-loading">
+    {% if selected.q %}<input type="hidden" name="q" value="{{ selected.q }}">{% endif %}
+
+    <div class="flex items-center justify-between gap-3 mb-5">
+      <button type="button" @click="fopen=!fopen"
+              class="lg:hidden flex items-center gap-2 h-10 px-4 rounded-xl bg-white ring-1 ring-slate-200 font-medium text-sm">
+        ⚙️ Фильтры
+      </button>
+      <div class="flex items-center gap-2 ml-auto">
+        <span id="grid-loading" class="htmx-indicator text-brand text-sm animate-pulse">обновляем…</span>
+        <label class="text-sm text-slate-500 hidden sm:block">Сортировка:</label>
+        <select name="sort" class="h-10 px-3 rounded-xl bg-white ring-1 ring-slate-200 text-sm focus:ring-brand outline-none">
+          <option value="popular" {% if sort == 'popular' %}selected{% endif %}>Популярные</option>
+          <option value="cheap" {% if sort == 'cheap' %}selected{% endif %}>Сначала дешёвые</option>
+          <option value="expensive" {% if sort == 'expensive' %}selected{% endif %}>Сначала дорогие</option>
+          <option value="new" {% if sort == 'new' %}selected{% endif %}>Новинки</option>
+          <option value="rating" {% if sort == 'rating' %}selected{% endif %}>По рейтингу</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-[280px_1fr] gap-6">
+      <aside :class="fopen ? 'block' : 'hidden'" class="lg:block">
+        {% include "catalog/_filters.html" %}
+      </aside>
+      <div id="product-grid">
+        {% include "catalog/_grid_block.html" %}
+      </div>
+    </div>
+  </form>
+</div>
+
+<style>.htmx-indicator{opacity:0}.htmx-request .htmx-indicator,.htmx-request.htmx-indicator{opacity:1}</style>
+{% endblock %}

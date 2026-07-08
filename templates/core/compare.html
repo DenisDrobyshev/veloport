@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% load shop_extras %}
+{% block title %}Сравнение — Veloport{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 py-8">
+  <div class="flex items-center justify-between mb-6">
+    <h1 class="text-2xl md:text-3xl font-extrabold">Сравнение товаров</h1>
+    {% if products %}<form method="post" action="{% url 'core:compare_clear' %}">{% csrf_token %}<button class="text-sm text-slate-400 hover:text-accent">Очистить</button></form>{% endif %}
+  </div>
+
+  {% if products %}
+  <div class="overflow-x-auto bg-white rounded-2xl ring-1 ring-slate-100">
+    <table class="min-w-full text-sm">
+      <thead>
+        <tr>
+          <th class="sticky left-0 bg-white z-10 w-40"></th>
+          {% for p in products %}
+          <th class="p-4 align-top min-w-[200px] border-l border-slate-100">
+            <a href="{{ p.get_absolute_url }}" class="block w-full aspect-square rounded-xl bg-slate-50 grid place-items-center overflow-hidden mb-2">
+              {% if p.main_image %}<img src="{{ p.main_image.url }}" class="w-full h-full object-cover">{% else %}<span class="text-4xl">🚲</span>{% endif %}
+            </a>
+            <a href="{{ p.get_absolute_url }}" class="font-semibold text-left block hover:text-brand line-clamp-2">{{ p.title }}</a>
+            <form method="post" action="{% url 'core:compare_remove' p.id %}" class="mt-1">{% csrf_token %}<button class="text-xs text-slate-400 hover:text-accent">Убрать ✕</button></form>
+            <form hx-post="{% url 'cart:add' p.id %}" hx-target="#toast" hx-swap="beforeend" class="mt-2">
+              <button class="w-full h-9 rounded-lg bg-brand text-white text-sm font-semibold">В корзину</button>
+            </form>
+          </th>
+          {% endfor %}
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-slate-100">
+        {% for label, values in rows %}
+        <tr class="{% cycle '' 'bg-slate-50/50' %}">
+          <td class="sticky left-0 bg-inherit p-4 font-medium text-slate-500 w-40">{{ label }}</td>
+          {% for v in values %}<td class="p-4 border-l border-slate-100 font-medium">{{ v }}</td>{% endfor %}
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div class="bg-white rounded-2xl ring-1 ring-slate-100 py-20 text-center">
+    <div class="text-6xl">⚖️</div>
+    <p class="mt-4 text-lg font-semibold">Список сравнения пуст</p>
+    <p class="text-slate-500 mt-1">Добавляйте товары кнопкой ⚖️ в каталоге</p>
+    <a href="{% url 'catalog:list' %}" class="inline-block mt-5 h-11 px-6 leading-[44px] rounded-xl bg-brand text-white font-semibold">В каталог</a>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

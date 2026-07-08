@@ -1,0 +1,133 @@
+{% extends "base.html" %}
+{% load shop_extras %}
+{% block title %}Veloport — велосипеды с умным подбором{% endblock %}
+
+{% block content %}
+<!-- Hero -->
+<section class="bg-gradient-to-br from-brand-dark via-brand to-brand-light text-white">
+  <div class="max-w-7xl mx-auto px-4 py-14 md:py-20 grid md:grid-cols-2 gap-8 items-center">
+    <div>
+      <span class="inline-block bg-white/15 rounded-full px-3 py-1 text-xs font-medium mb-4">🚴 Более 2000 моделей в наличии</span>
+      <h1 class="text-4xl md:text-5xl font-extrabold leading-tight">Велосипед мечты — <br>с умным подбором</h1>
+      <p class="mt-4 text-white/90 text-lg max-w-md">Ответьте на 3 вопроса — подберём модель под ваш рост, стиль и бюджет. Честное наличие, своя веломастерская и trade-in.</p>
+      <div class="mt-7 flex flex-wrap gap-3">
+        <a href="{% url 'core:fit_finder' %}" class="h-12 px-6 leading-[48px] rounded-xl bg-white text-brand-dark font-bold hover:bg-white/90">🎯 Подобрать велосипед</a>
+        <a href="{% url 'catalog:list' %}" class="h-12 px-6 leading-[48px] rounded-xl bg-white/15 hover:bg-white/25 font-semibold">Весь каталог</a>
+      </div>
+    </div>
+    <div class="hidden md:grid grid-cols-2 gap-3">
+      {% for p in bestsellers|slice:":2" %}
+      <a href="{{ p.get_absolute_url }}" class="bg-white/10 rounded-2xl p-4 hover:bg-white/15 transition">
+        <div class="aspect-square rounded-xl bg-white/90 grid place-items-center overflow-hidden mb-2">
+          {% if p.main_image %}<img src="{{ p.main_image.url }}" class="w-full h-full object-cover">{% else %}<span class="text-6xl">🚲</span>{% endif %}
+        </div>
+        <div class="font-semibold text-sm line-clamp-1">{{ p.title }}</div>
+        <div class="text-white/80 text-sm">{{ p.price|rub }}</div>
+      </a>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- USP -->
+<section class="max-w-7xl mx-auto px-4 -mt-6 relative z-10">
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+    <div class="bg-white rounded-2xl ring-1 ring-slate-100 p-4"><div class="text-2xl">🎯</div><div class="font-semibold mt-1">Умный подбор</div><div class="text-xs text-slate-500">под рост и стиль</div></div>
+    <div class="bg-white rounded-2xl ring-1 ring-slate-100 p-4"><div class="text-2xl">📦</div><div class="font-semibold mt-1">Честное наличие</div><div class="text-xs text-slate-500">по каждому магазину</div></div>
+    <div class="bg-white rounded-2xl ring-1 ring-slate-100 p-4"><div class="text-2xl">🔧</div><div class="font-semibold mt-1">Веломастерская</div><div class="text-xs text-slate-500">сборка и ТО</div></div>
+    <div class="bg-white rounded-2xl ring-1 ring-slate-100 p-4"><div class="text-2xl">♻️</div><div class="font-semibold mt-1">Trade-in</div><div class="text-xs text-slate-500">сдай старый в зачёт</div></div>
+  </div>
+</section>
+
+<!-- Категории -->
+<section class="max-w-7xl mx-auto px-4 py-12">
+  <h2 class="text-2xl font-extrabold mb-5">Категории</h2>
+  <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3">
+    {% for cat in categories %}
+    <a href="{{ cat.get_absolute_url }}" class="bg-white rounded-2xl ring-1 ring-slate-100 p-4 text-center hover:ring-brand hover:shadow-lg transition">
+      <div class="text-4xl">{{ cat.icon|default:"🚲" }}</div>
+      <div class="mt-2 font-semibold text-sm">{{ cat.name }}</div>
+    </a>
+    {% endfor %}
+  </div>
+</section>
+
+{% if bestsellers %}
+<section class="max-w-7xl mx-auto px-4 pb-4">
+  <div class="flex items-center justify-between mb-4">
+    <h2 class="text-2xl font-extrabold">🔥 Хиты продаж</h2>
+    <a href="{% url 'catalog:list' %}?sort=popular" class="text-brand font-medium text-sm hover:underline">Все →</a>
+  </div>
+  <div class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4">
+    {% for product in bestsellers %}{% include "partials/product_card.html" %}{% endfor %}
+  </div>
+</section>
+{% endif %}
+
+<!-- Подбор CTA -->
+<section class="max-w-7xl mx-auto px-4 py-10">
+  <div class="bg-ink text-white rounded-3xl p-8 md:p-12 grid md:grid-cols-2 gap-6 items-center">
+    <div>
+      <h2 class="text-2xl md:text-3xl font-extrabold">Не знаете, какой велосипед выбрать?</h2>
+      <p class="mt-3 text-slate-300">Наш подборщик за 30 секунд предложит модели под ваш рост, стиль катания и бюджет. Никакой воды — только подходящие варианты.</p>
+      <a href="{% url 'core:fit_finder' %}" class="inline-block mt-6 h-12 px-7 leading-[48px] rounded-xl bg-brand hover:bg-brand-light font-bold">Запустить подбор 🎯</a>
+    </div>
+    <div class="grid grid-cols-3 gap-3 text-center">
+      <div class="bg-white/10 rounded-2xl py-6"><div class="text-3xl">📏</div><div class="text-sm mt-2 text-slate-300">Ваш рост</div></div>
+      <div class="bg-white/10 rounded-2xl py-6"><div class="text-3xl">🚵</div><div class="text-sm mt-2 text-slate-300">Стиль</div></div>
+      <div class="bg-white/10 rounded-2xl py-6"><div class="text-3xl">💰</div><div class="text-sm mt-2 text-slate-300">Бюджет</div></div>
+    </div>
+  </div>
+</section>
+
+{% if new_arrivals %}
+<section class="max-w-7xl mx-auto px-4 py-4">
+  <div class="flex items-center justify-between mb-4">
+    <h2 class="text-2xl font-extrabold">✨ Новинки</h2>
+    <a href="{% url 'catalog:list' %}?sort=new" class="text-brand font-medium text-sm hover:underline">Все →</a>
+  </div>
+  <div class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4">
+    {% for product in new_arrivals %}{% include "partials/product_card.html" %}{% endfor %}
+  </div>
+</section>
+{% endif %}
+
+{% if discounted %}
+<section class="max-w-7xl mx-auto px-4 py-8">
+  <div class="flex items-center justify-between mb-4">
+    <h2 class="text-2xl font-extrabold">🏷 Скидки</h2>
+    <a href="{% url 'catalog:list' %}?discount=1" class="text-brand font-medium text-sm hover:underline">Все →</a>
+  </div>
+  <div class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4">
+    {% for product in discounted %}{% include "partials/product_card.html" %}{% endfor %}
+  </div>
+</section>
+{% endif %}
+
+<!-- Промо сервисов -->
+<section class="max-w-7xl mx-auto px-4 py-8 grid md:grid-cols-2 gap-4">
+  <div class="bg-gradient-to-br from-brand to-brand-light text-white rounded-3xl p-8">
+    <div class="text-4xl">🔧</div>
+    <h3 class="text-2xl font-extrabold mt-3">Веломастерская</h3>
+    <p class="mt-2 text-white/90">ТО, сборка, настройка переключателей и тормозов. Запишитесь онлайн.</p>
+    <a href="{% url 'service:index' %}" class="inline-block mt-5 h-11 px-6 leading-[44px] rounded-xl bg-white text-brand-dark font-bold">Записаться</a>
+  </div>
+  <div class="bg-gradient-to-br from-accent to-accent-dark text-white rounded-3xl p-8">
+    <div class="text-4xl">♻️</div>
+    <h3 class="text-2xl font-extrabold mt-3">Trade-in</h3>
+    <p class="mt-2 text-white/90">Сдайте старый велосипед и получите скидку на новый. Оценим за 1 день.</p>
+    <a href="{% url 'service:tradein' %}" class="inline-block mt-5 h-11 px-6 leading-[44px] rounded-xl bg-white text-accent-dark font-bold">Оценить</a>
+  </div>
+</section>
+
+{% if brands %}
+<section class="max-w-7xl mx-auto px-4 py-8">
+  <h2 class="text-2xl font-extrabold mb-5">Бренды</h2>
+  <div class="flex flex-wrap gap-3">
+    {% for b in brands %}
+    <a href="{{ b.get_absolute_url }}" class="bg-white rounded-xl ring-1 ring-slate-100 px-5 py-3 font-semibold text-slate-600 hover:ring-brand hover:text-brand transition">{{ b.name }}</a>
+    {% endfor %}
+  </div>
+</section>
+{% endif %}
+{% endblock %}

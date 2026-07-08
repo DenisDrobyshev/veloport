@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% load widget_tweaks %}
+{% block title %}Вход — Veloport{% endblock %}
+
+{% block content %}
+<div class="max-w-md mx-auto px-4 py-12">
+  <div class="bg-white rounded-3xl ring-1 ring-slate-100 p-8">
+    <h1 class="text-2xl font-extrabold mb-6">Вход в кабинет</h1>
+    <form method="post" class="space-y-4">
+      {% csrf_token %}
+      <div>
+        <label class="text-sm text-slate-500">Логин</label>
+        {% render_field form.username class="w-full h-11 px-3 rounded-xl border border-slate-200 focus:border-brand outline-none" %}
+      </div>
+      <div>
+        <label class="text-sm text-slate-500">Пароль</label>
+        {% render_field form.password class="w-full h-11 px-3 rounded-xl border border-slate-200 focus:border-brand outline-none" %}
+      </div>
+      {% if form.errors %}<p class="text-sm text-red-600">Неверный логин или пароль</p>{% endif %}
+      <button class="w-full h-11 rounded-xl bg-brand hover:bg-brand-dark text-white font-semibold">Войти</button>
+    </form>
+    <p class="mt-4 text-sm text-slate-500 text-center">Нет аккаунта? <a href="{% url 'accounts:register' %}" class="text-brand font-medium">Зарегистрироваться</a></p>
+  </div>
+</div>
+{% endblock %}

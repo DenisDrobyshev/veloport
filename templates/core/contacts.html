@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}Контакты — Veloport{% endblock %}
+
+{% block content %}
+<div class="max-w-5xl mx-auto px-4 py-8">
+  <h1 class="text-2xl md:text-3xl font-extrabold mb-6">Контакты</h1>
+  <div class="grid md:grid-cols-2 gap-4 mb-8">
+    <div class="bg-white rounded-2xl ring-1 ring-slate-100 p-6">
+      <h2 class="font-bold text-lg mb-3">Связаться с нами</h2>
+      <div class="space-y-2 text-slate-600">
+        <div>📞 <a href="tel:88005553535" class="font-semibold text-ink">8 800 555-35-35</a> — бесплатно по России</div>
+        <div>✉️ hello@veloport.ru</div>
+        <div>🕑 Ежедневно 9:00–21:00</div>
+      </div>
+    </div>
+    <div class="bg-white rounded-2xl ring-1 ring-slate-100 p-6">
+      <h2 class="font-bold text-lg mb-3">Соцсети</h2>
+      <div class="flex gap-3 text-slate-600">
+        <span class="h-11 w-11 grid place-items-center rounded-xl bg-slate-100">VK</span>
+        <span class="h-11 w-11 grid place-items-center rounded-xl bg-slate-100">TG</span>
+        <span class="h-11 w-11 grid place-items-center rounded-xl bg-slate-100">YT</span>
+      </div>
+    </div>
+  </div>
+
+  <h2 class="font-bold text-lg mb-4">Магазины</h2>
+  <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+    {% for store in stores %}
+    <a href="{% url 'stores:detail' store.slug %}" class="bg-white rounded-2xl ring-1 ring-slate-100 p-5 hover:ring-brand transition">
+      <div class="font-bold">{{ store.name }}</div>
+      <div class="text-sm text-slate-500 mt-1">📍 {{ store.city }}, {{ store.address }}</div>
+      <div class="text-sm text-slate-500">🕑 {{ store.work_hours }}</div>
+    </a>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

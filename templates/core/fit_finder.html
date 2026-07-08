@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% load shop_extras widget_tweaks %}
+{% block title %}Подбор велосипеда — Veloport{% endblock %}
+
+{% block content %}
+<section class="bg-gradient-to-br from-ink to-slate-800 text-white">
+  <div class="max-w-4xl mx-auto px-4 py-12 text-center">
+    <h1 class="text-3xl md:text-4xl font-extrabold">🎯 Умный подбор велосипеда</h1>
+    <p class="mt-3 text-slate-300">Три вопроса — и мы покажем модели, которые подходят именно вам</p>
+  </div>
+</section>
+
+<div class="max-w-4xl mx-auto px-4 py-8">
+  <form method="get" class="bg-white rounded-2xl ring-1 ring-slate-100 p-6 grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+    <div>
+      <label class="text-sm text-slate-500">Ваш рост, см</label>
+      {% render_field form.height class="w-full h-12 px-3 rounded-xl border border-slate-200 focus:border-brand outline-none" %}
+    </div>
+    <div>
+      <label class="text-sm text-slate-500">Стиль катания</label>
+      {% render_field form.style class="w-full h-12 px-3 rounded-xl border border-slate-200 focus:border-brand outline-none" %}
+    </div>
+    <div>
+      <label class="text-sm text-slate-500">Бюджет</label>
+      {% render_field form.budget class="w-full h-12 px-3 rounded-xl border border-slate-200 focus:border-brand outline-none" %}
+    </div>
+    <button class="h-12 rounded-xl bg-brand hover:bg-brand-dark text-white font-bold">Подобрать</button>
+  </form>
+
+  {% if results is not None %}
+    {% if recommended_size %}
+    <div class="mt-6 bg-brand-50 rounded-2xl p-5 flex items-center gap-4">
+      <div class="text-4xl">📏</div>
+      <div>
+        <div class="font-bold">Рекомендуемая ростовка рамы: <span class="text-brand-dark">{{ recommended_size }}</span></div>
+        <div class="text-sm text-slate-600">Подобрано под ваш рост. Точную ростовку уточните в характеристиках модели.</div>
+      </div>
+    </div>
+    {% endif %}
+
+    <h2 class="text-xl font-extrabold mt-8 mb-4">Подходящие модели ({{ results|length }})</h2>
+    {% if results %}
+    <div class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4">
+      {% for product in results %}{% include "partials/product_card.html" %}{% endfor %}
+    </div>
+    {% else %}
+    <div class="bg-white rounded-2xl ring-1 ring-slate-100 py-16 text-center">
+      <div class="text-5xl">🤔</div>
+      <p class="mt-3 font-semibold">Под эти параметры пока нет моделей</p>
+      <p class="text-slate-500 text-sm">Попробуйте расширить бюджет или другой стиль</p>
+    </div>
+    {% endif %}
+  {% endif %}
+</div>
+{% endblock %}

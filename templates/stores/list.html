@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}Магазины — Veloport{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 py-8">
+  <h1 class="text-2xl md:text-3xl font-extrabold mb-2">Наши магазины</h1>
+  <p class="text-slate-500 mb-6">Приезжайте на тест-драйв или заберите онлайн-заказ</p>
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+    {% for store in stores %}
+    <a href="{% url 'stores:detail' store.slug %}" class="bg-white rounded-2xl ring-1 ring-slate-100 p-5 hover:ring-brand hover:shadow-lg transition">
+      <div class="flex items-start justify-between">
+        <h3 class="font-bold text-lg">{{ store.name }}</h3>
+        {% if store.has_service %}<span class="text-xs bg-brand-50 text-brand-dark px-2 py-1 rounded-full">🔧 мастерская</span>{% endif %}
+      </div>
+      <div class="mt-2 text-sm text-slate-500 space-y-1">
+        <div>📍 {{ store.city }}, {{ store.address }}</div>
+        <div>🕑 {{ store.work_hours }}</div>
+        {% if store.phone %}<div>📞 {{ store.phone }}</div>{% endif %}
+      </div>
+    </a>
+    {% empty %}
+    <p class="text-slate-500">Магазины скоро появятся.</p>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

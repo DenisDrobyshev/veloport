@@ -1,0 +1,8 @@
+{% load shop_extras %}
+<div class="bg-white shadow-xl ring-1 ring-black/5 rounded-xl px-4 py-3 text-sm font-medium border-l-4 border-brand flex items-center gap-3"
+     x-data="{show:true}" x-show="show" x-init="setTimeout(()=>show=false,3500)" x-transition>
+  <span>✅ «{{ added.title|truncatechars:32 }}» в корзине</span>
+  <a href="{% url 'cart:detail' %}" class="text-brand underline whitespace-nowrap">Оформить</a>
+</div>
+<span id="cart-count" hx-swap-oob="true"
+      class="absolute top-0 right-0 bg-brand text-white text-[10px] rounded-full h-4 min-w-4 px-1 grid place-items-center">{{ cart|length }}</span>

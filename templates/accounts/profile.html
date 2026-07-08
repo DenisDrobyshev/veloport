@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% load shop_extras %}
+{% block title %}Личный кабинет — Veloport{% endblock %}
+
+{% block content %}
+<div class="max-w-5xl mx-auto px-4 py-8">
+  <div class="flex items-center justify-between mb-6">
+    <div>
+      <h1 class="text-2xl md:text-3xl font-extrabold">Привет, {{ user.first_name|default:user.username }}!</h1>
+      <p class="text-slate-500 text-sm mt-1">Бонусных баллов: <b class="text-brand">{{ user.bonus_points }}</b></p>
+    </div>
+    <div class="flex gap-2">
+      <a href="{% url 'accounts:profile_edit' %}" class="h-10 px-4 leading-[40px] rounded-xl ring-1 ring-slate-200 font-medium text-sm">Настройки</a>
+      <form method="post" action="{% url 'accounts:logout' %}">{% csrf_token %}<button class="h-10 px-4 rounded-xl ring-1 ring-slate-200 font-medium text-sm text-slate-500">Выйти</button></form>
+    </div>
+  </div>
+
+  <h2 class="font-bold text-lg mb-3">Мои заказы</h2>
+  {% if orders %}
+  <div class="space-y-3">
+    {% for order in orders %}
+    <div class="bg-white rounded-2xl ring-1 ring-slate-100 p-5">
+      <div class="flex items-center justify-between flex-wrap gap-2">
+        <div>
+          <div class="font-semibold">Заказ № {{ order.number }}</div>
+          <div class="text-xs text-slate-400">{{ order.created_at|date:"d.m.Y H:i" }}</div>
+        </div>
+        <span class="text-xs font-semibold px-3 py-1 rounded-full bg-brand-50 text-brand-dark">{{ order.get_status_display }}</span>
+        <div class="font-bold">{{ order.total|rub }}</div>
+      </div>
+      <div class="mt-3 text-sm text-slate-500">{% for item in order.items.all %}{{ item.title }} × {{ item.qty }}{% if not forloop.last %}, {% endif %}{% endfor %}</div>
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="bg-white rounded-2xl ring-1 ring-slate-100 py-16 text-center">
+    <div class="text-5xl">📦</div>
+    <p class="mt-3 text-slate-500">У вас пока нет заказов</p>
+    <a href="{% url 'catalog:list' %}" class="inline-block mt-4 h-11 px-6 leading-[44px] rounded-xl bg-brand text-white font-semibold">В каталог</a>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

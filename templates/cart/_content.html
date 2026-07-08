@@ -1,0 +1,53 @@
+{% load shop_extras %}
+{% if cart.is_empty %}
+<div class="bg-white rounded-2xl ring-1 ring-slate-100 py-20 text-center">
+  <div class="text-6xl">🛒</div>
+  <p class="mt-4 text-lg font-semibold">Корзина пуста</p>
+  <p class="text-slate-500 mt-1">Самое время выбрать велосипед мечты</p>
+  <a href="{% url 'catalog:list' %}" class="inline-block mt-5 h-11 px-6 leading-[44px] rounded-xl bg-brand text-white font-semibold">В каталог</a>
+</div>
+{% else %}
+<div class="grid grid-cols-1 lg:grid-cols-[1fr_360px] gap-6">
+  <div class="space-y-3">
+    {% for item in cart %}
+    <div class="bg-white rounded-2xl ring-1 ring-slate-100 p-4 flex gap-4">
+      <a href="{{ item.product.get_absolute_url }}" class="w-24 h-24 shrink-0 rounded-xl bg-slate-50 grid place-items-center overflow-hidden">
+        {% if item.product.main_image %}<img src="{{ item.product.main_image.url }}" class="w-full h-full object-cover">{% else %}<span class="text-3xl">🚲</span>{% endif %}
+      </a>
+      <div class="flex-1 min-w-0">
+        <a href="{{ item.product.get_absolute_url }}" class="font-semibold hover:text-brand line-clamp-2">{{ item.product.title }}</a>
+        {% if item.variant %}<div class="text-xs text-slate-500">{{ item.variant.group }}: {{ item.variant.value }}</div>{% endif %}
+        <div class="text-sm text-slate-500 mt-0.5">{{ item.price|rub }} / шт</div>
+        <div class="mt-2 flex items-center justify-between">
+          <div class="flex items-center rounded-lg ring-1 ring-slate-200 h-9">
+            <button hx-post="{% url 'cart:update' item.key %}" hx-vals='{"qty": {{ item.qty|add:"-1" }} }' hx-target="#cart-content" hx-swap="innerHTML" class="w-9 h-full">−</button>
+            <span class="w-8 text-center text-sm font-semibold">{{ item.qty }}</span>
+            <button hx-post="{% url 'cart:update' item.key %}" hx-vals='{"qty": {{ item.qty|add:"1" }} }' hx-target="#cart-content" hx-swap="innerHTML" class="w-9 h-full">+</button>
+          </div>
+          <div class="font-bold">{{ item.total|rub }}</div>
+        </div>
+      </div>
+      <button hx-post="{% url 'cart:remove' item.key %}" hx-target="#cart-content" hx-swap="innerHTML" title="Удалить"
+              class="self-start text-slate-300 hover:text-accent text-xl">✕</button>
+    </div>
+    {% endfor %}
+    <div class="text-right">
+      <button hx-post="{% url 'cart:clear' %}" hx-target="#cart-content" hx-swap="innerHTML" class="text-sm text-slate-400 hover:text-accent">Очистить корзину</button>
+    </div>
+  </div>
+
+  <div class="lg:sticky lg:top-24 h-fit bg-white rounded-2xl ring-1 ring-slate-100 p-5">
+    <h3 class="font-bold text-lg mb-4">Итого</h3>
+    <div class="space-y-2 text-sm">
+      <div class="flex justify-between"><span class="text-slate-500">Товары ({{ cart|length }})</span><span>{{ cart.total|rub }}</span></div>
+      <div class="flex justify-between"><span class="text-slate-500">Доставка</span><span>{% if cart.shipping %}{{ cart.shipping|rub }}{% else %}<span class="text-brand">Бесплатно</span>{% endif %}</span></div>
+    </div>
+    <div class="border-t border-slate-100 mt-3 pt-3 flex justify-between items-center">
+      <span class="font-semibold">К оплате</span>
+      <span class="text-2xl font-extrabold">{{ cart.grand_total|rub }}</span>
+    </div>
+    <a href="{% url 'orders:checkout' %}" class="mt-4 block text-center h-12 leading-[48px] rounded-xl bg-accent hover:bg-accent-dark text-white font-bold">Оформить заказ</a>
+    {% if cart.shipping %}<p class="mt-3 text-xs text-slate-400 text-center">До бесплатной доставки: {{ cart.shipping|rub }} … добавьте товаров</p>{% endif %}
+  </div>
+</div>
+{% endif %}

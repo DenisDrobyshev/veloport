@@ -1,0 +1,20 @@
+{% if page_obj.paginator.num_pages > 1 %}
+<div class="flex justify-center items-center gap-1.5 mt-10">
+  {% if page_obj.has_previous %}
+    <a href="?page={{ page_obj.previous_page_number }}{% if querystring %}&{{ querystring }}{% endif %}"
+       class="h-10 px-3 grid place-items-center rounded-lg ring-1 ring-slate-200 hover:ring-brand hover:text-brand">←</a>
+  {% endif %}
+  {% for n in page_obj.paginator.page_range %}
+    {% if n == page_obj.number %}
+      <span class="h-10 w-10 grid place-items-center rounded-lg bg-brand text-white font-semibold">{{ n }}</span>
+    {% elif n > page_obj.number|add:"-3" and n < page_obj.number|add:"3" %}
+      <a href="?page={{ n }}{% if querystring %}&{{ querystring }}{% endif %}"
+         class="h-10 w-10 grid place-items-center rounded-lg ring-1 ring-slate-200 hover:ring-brand hover:text-brand">{{ n }}</a>
+    {% endif %}
+  {% endfor %}
+  {% if page_obj.has_next %}
+    <a href="?page={{ page_obj.next_page_number }}{% if querystring %}&{{ querystring }}{% endif %}"
+       class="h-10 px-3 grid place-items-center rounded-lg ring-1 ring-slate-200 hover:ring-brand hover:text-brand">→</a>
+  {% endif %}
+</div>
+{% endif %}

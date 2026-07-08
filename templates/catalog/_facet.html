@@ -1,0 +1,11 @@
+<div class="bg-white rounded-2xl ring-1 ring-slate-100 p-4">
+  <h3 class="font-semibold mb-3 text-sm">{{ title }}</h3>
+  <div class="space-y-2 max-h-52 overflow-auto no-scrollbar">
+    {% for val, label in options %}
+    <label class="flex items-center gap-2 text-sm cursor-pointer hover:text-brand">
+      <input type="checkbox" name="{{ name }}" value="{{ val }}" {% if val in chosen %}checked{% endif %} class="accent-brand w-4 h-4">
+      {{ label }}
+    </label>
+    {% endfor %}
+  </div>
+</div>

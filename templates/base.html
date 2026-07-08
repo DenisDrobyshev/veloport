@@ -1,0 +1,180 @@
+{% load static shop_extras %}
+<!DOCTYPE html>
+<html lang="ru" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Veloport — велосипеды и спортинвентарь{% endblock %}</title>
+  <meta name="description" content="{% block meta_description %}Veloport — интернет-магазин велосипедов, экипировки и аксессуаров. Умный подбор, доставка, веломастерская.{% endblock %}">
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: { extend: {
+        colors: {
+          brand: { DEFAULT: '#0d9488', dark: '#0f766e', light: '#14b8a6', 50:'#f0fdfa' },
+          accent: { DEFAULT: '#f97316', dark: '#ea580c' },
+          ink: '#0f172a',
+        },
+        fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] },
+      }}
+    }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/htmx.org@1.9.10" defer></script>
+  <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+  <style>
+    body { font-family: 'Inter', system-ui, sans-serif; }
+    [x-cloak] { display: none !important; }
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+  </style>
+  {% block head %}{% endblock %}
+</head>
+<body class="bg-slate-50 text-ink antialiased"
+      hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
+
+  <!-- Топ-бар -->
+  <div class="bg-brand-dark text-white text-xs">
+    <div class="max-w-7xl mx-auto px-4 h-9 flex items-center justify-between">
+      <div class="flex items-center gap-4">
+        <span class="hidden sm:inline">📍 Москва</span>
+        <a href="{% url 'stores:list' %}" class="hover:text-white/80">Магазины</a>
+        <a href="{% url 'service:index' %}" class="hover:text-white/80">Веломастерская</a>
+        <a href="{% url 'service:tradein' %}" class="hover:text-white/80">Trade-in</a>
+      </div>
+      <div class="flex items-center gap-4">
+        <a href="{% url 'content:guides' %}" class="hover:text-white/80 hidden sm:inline">Гайды и размеры</a>
+        <a href="tel:88005553535" class="font-semibold">8 800 555-35-35</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Шапка -->
+  <header class="bg-white shadow-sm sticky top-0 z-40">
+    <div class="max-w-7xl mx-auto px-4 h-16 md:h-20 flex items-center gap-3 md:gap-6">
+      <a href="{% url 'core:home' %}" class="flex items-center gap-2 shrink-0">
+        <span class="text-2xl md:text-3xl">🚲</span>
+        <span class="text-xl md:text-2xl font-extrabold tracking-tight">Velo<span class="text-brand">port</span></span>
+      </a>
+
+      <!-- Каталог -->
+      <div x-data="{ open: false }" class="relative shrink-0" @mouseleave="open=false">
+        <button @click="open=!open" @mouseenter="open=true"
+                class="hidden md:flex items-center gap-2 bg-brand hover:bg-brand-dark text-white font-semibold px-4 py-2.5 rounded-xl transition">
+          <span>☰</span> Каталог
+        </button>
+        <div x-show="open" x-cloak x-transition
+             class="absolute left-0 top-full mt-2 w-72 bg-white rounded-2xl shadow-2xl ring-1 ring-black/5 p-2 z-50">
+          {% for cat in menu_categories %}
+          <div class="group">
+            <a href="{{ cat.get_absolute_url }}"
+               class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-brand-50 font-medium">
+              <span class="text-lg">{{ cat.icon|default:"•" }}</span>{{ cat.name }}
+            </a>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+
+      <!-- Поиск -->
+      <form action="{% url 'catalog:list' %}" method="get" class="flex-1 max-w-2xl">
+        <div class="relative">
+          <input type="text" name="q" value="{{ request.GET.q }}" placeholder="Искать велосипед, бренд, аксессуар…"
+                 class="w-full h-11 pl-4 pr-11 rounded-xl border border-slate-200 focus:border-brand focus:ring-2 focus:ring-brand/20 outline-none">
+          <button type="submit" class="absolute right-1.5 top-1.5 h-8 w-8 grid place-items-center rounded-lg bg-brand text-white hover:bg-brand-dark">🔍</button>
+        </div>
+      </form>
+
+      <!-- Иконки -->
+      <nav class="flex items-center gap-1 md:gap-2 ml-auto shrink-0">
+        <a href="{% url 'core:fit_finder' %}" title="Подбор велосипеда"
+           class="hidden lg:flex flex-col items-center px-2 py-1 rounded-lg hover:bg-slate-100 text-slate-700">
+          <span class="text-xl">🎯</span><span class="text-[11px]">Подбор</span>
+        </a>
+        <a href="{% url 'core:compare' %}" title="Сравнение"
+           class="relative flex flex-col items-center px-2 py-1 rounded-lg hover:bg-slate-100 text-slate-700">
+          <span class="text-xl">⚖️</span><span class="text-[11px] hidden md:block">Сравнить</span>
+          {% if compare_count %}<span class="absolute top-0 right-0 bg-accent text-white text-[10px] rounded-full h-4 min-w-4 px-1 grid place-items-center">{{ compare_count }}</span>{% endif %}
+        </a>
+        <a href="{% url 'accounts:profile' %}" title="Профиль"
+           class="flex flex-col items-center px-2 py-1 rounded-lg hover:bg-slate-100 text-slate-700">
+          <span class="text-xl">👤</span><span class="text-[11px] hidden md:block">Кабинет</span>
+        </a>
+        <a href="{% url 'cart:detail' %}" title="Корзина"
+           class="relative flex flex-col items-center px-2 py-1 rounded-lg hover:bg-slate-100 text-slate-700">
+          <span class="text-xl">🛒</span><span class="text-[11px] hidden md:block">Корзина</span>
+          <span id="cart-count" class="absolute top-0 right-0 bg-brand text-white text-[10px] rounded-full h-4 min-w-4 px-1 grid place-items-center {% if not cart|length %}hidden{% endif %}">{{ cart|length }}</span>
+        </a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Тосты / сообщения -->
+  <div id="toast" class="fixed top-24 right-4 z-50 space-y-2"></div>
+  {% if messages %}
+  <div class="fixed top-24 right-4 z-50 space-y-2">
+    {% for message in messages %}
+    <div x-data="{show:true}" x-show="show" x-init="setTimeout(()=>show=false, 4000)" x-transition
+         class="bg-white shadow-lg ring-1 ring-black/5 rounded-xl px-4 py-3 text-sm font-medium
+                {% if message.tags == 'success' %}border-l-4 border-brand{% elif message.tags == 'error' %}border-l-4 border-red-500{% else %}border-l-4 border-slate-400{% endif %}">
+      {{ message }}
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  <main class="min-h-[60vh]">
+    {% block content %}{% endblock %}
+  </main>
+
+  <!-- Футер -->
+  <footer class="bg-ink text-slate-300 mt-16">
+    <div class="max-w-7xl mx-auto px-4 py-12 grid grid-cols-2 md:grid-cols-5 gap-8">
+      <div class="col-span-2">
+        <div class="flex items-center gap-2 text-white">
+          <span class="text-2xl">🚲</span>
+          <span class="text-xl font-extrabold">Velo<span class="text-brand-light">port</span></span>
+        </div>
+        <p class="mt-3 text-sm text-slate-400 max-w-xs">Велосипеды, экипировка и аксессуары. Умный подбор, честное наличие, своя веломастерская.</p>
+        <form hx-post="{% url 'core:subscribe' %}" hx-target="this" hx-swap="outerHTML" class="mt-4 flex gap-2 max-w-xs">
+          <input type="email" name="email" required placeholder="Email для акций"
+                 class="flex-1 h-10 px-3 rounded-lg bg-white/10 text-white placeholder-slate-400 outline-none focus:ring-2 focus:ring-brand">
+          <button class="h-10 px-4 rounded-lg bg-brand hover:bg-brand-light text-white font-semibold">OK</button>
+        </form>
+      </div>
+      <div>
+        <h4 class="text-white font-semibold mb-3">Каталог</h4>
+        <ul class="space-y-2 text-sm">
+          {% for cat in menu_categories %}<li><a href="{{ cat.get_absolute_url }}" class="hover:text-white">{{ cat.name }}</a></li>{% endfor %}
+        </ul>
+      </div>
+      <div>
+        <h4 class="text-white font-semibold mb-3">Покупателям</h4>
+        <ul class="space-y-2 text-sm">
+          <li><a href="{% url 'core:fit_finder' %}" class="hover:text-white">Подбор велосипеда</a></li>
+          <li><a href="{% url 'content:guides' %}" class="hover:text-white">Размерные сетки</a></li>
+          <li><a href="{% url 'content:blog' %}" class="hover:text-white">Блог и гайды</a></li>
+          <li><a href="{% url 'service:tradein' %}" class="hover:text-white">Trade-in</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="text-white font-semibold mb-3">Компания</h4>
+        <ul class="space-y-2 text-sm">
+          <li><a href="{% url 'stores:list' %}" class="hover:text-white">Магазины</a></li>
+          <li><a href="{% url 'service:index' %}" class="hover:text-white">Веломастерская</a></li>
+          <li><a href="{% url 'core:contacts' %}" class="hover:text-white">Контакты</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="border-t border-white/10">
+      <div class="max-w-7xl mx-auto px-4 py-5 text-xs text-slate-500 flex flex-col md:flex-row justify-between gap-2">
+        <span>© {% now "Y" %} Veloport. Демо-проект интернет-магазина.</span>
+        <span>Оплата: 💳 Visa · MasterCard · МИР · СБП</span>
+      </div>
+    </div>
+  </footer>
+
+  {% block scripts %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% load shop_extras %}
+{% block title %}Оплата заказа {{ order.number }} — Veloport{% endblock %}
+
+{% block content %}
+<div class="max-w-md mx-auto px-4 py-12">
+  <div class="bg-white rounded-3xl ring-1 ring-slate-100 p-8">
+    <div class="flex items-center gap-2 text-slate-400 text-sm mb-4">
+      <span class="text-xl">🔒</span> Демо-платёжная страница
+    </div>
+    <h1 class="text-xl font-extrabold">Оплата заказа № {{ order.number }}</h1>
+    <div class="mt-4 bg-slate-50 rounded-2xl p-5 text-center">
+      <div class="text-sm text-slate-500">К оплате</div>
+      <div class="text-4xl font-extrabold mt-1">{{ order.total|rub }}</div>
+      <div class="text-xs text-slate-400 mt-1">{{ order.get_payment_method_display }}</div>
+    </div>
+
+    <div class="mt-5 space-y-3">
+      <div>
+        <label class="text-sm text-slate-500">Номер карты</label>
+        <input value="4242 4242 4242 4242" class="w-full h-11 px-3 rounded-xl border border-slate-200" readonly>
+      </div>
+      <div class="grid grid-cols-2 gap-3">
+        <input value="12/28" class="h-11 px-3 rounded-xl border border-slate-200" readonly>
+        <input value="CVC 123" class="h-11 px-3 rounded-xl border border-slate-200" readonly>
+      </div>
+    </div>
+
+    <form method="post" action="{% url 'orders:mock_confirm' order.number %}" class="mt-5">
+      {% csrf_token %}
+      <button class="w-full h-12 rounded-xl bg-brand hover:bg-brand-dark text-white font-bold">Оплатить {{ order.total|rub }}</button>
+    </form>
+    <a href="{% url 'orders:success' order.number %}" class="block text-center mt-3 text-sm text-slate-400 hover:text-slate-600">Отменить и вернуться к заказу</a>
+
+    <p class="mt-5 text-xs text-slate-400 text-center leading-relaxed">
+      Это имитация оплаты для разработки. Реальная оплата ЮKassa включается заданием
+      <code>YOOKASSA_SHOP_ID</code> и <code>YOOKASSA_SECRET_KEY</code> в <code>.env</code>.
+    </p>
+  </div>
+</div>
+{% endblock %}

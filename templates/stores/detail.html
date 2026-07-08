@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% load shop_extras %}
+{% block title %}{{ store.name }} — Veloport{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 py-8">
+  <nav class="text-sm text-slate-400 mb-3"><a href="{% url 'stores:list' %}" class="hover:text-brand">Магазины</a><span class="mx-1">/</span><span class="text-ink">{{ store.name }}</span></nav>
+  <div class="bg-white rounded-2xl ring-1 ring-slate-100 p-6 mb-6">
+    <h1 class="text-2xl font-extrabold">{{ store.name }}</h1>
+    <div class="mt-2 text-slate-600 grid sm:grid-cols-2 gap-1 text-sm">
+      <div>📍 {{ store.city }}, {{ store.address }}</div>
+      <div>🕑 {{ store.work_hours }}</div>
+      {% if store.phone %}<div>📞 {{ store.phone }}</div>{% endif %}
+      {% if store.has_service %}<div>🔧 Есть веломастерская</div>{% endif %}
+    </div>
+  </div>
+
+  <h2 class="font-bold text-lg mb-4">В наличии в этом магазине</h2>
+  {% if stocks %}
+  <div class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4">
+    {% for s in stocks %}{% with product=s.product %}{% include "partials/product_card.html" %}{% endwith %}{% endfor %}
+  </div>
+  {% else %}
+  <p class="text-slate-500">Пока нет данных об остатках.</p>
+  {% endif %}
+</div>
+{% endblock %}

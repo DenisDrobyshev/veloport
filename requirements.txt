@@ -1,0 +1,23 @@
+# --- Core ---
+Django==4.2.9
+djangorestframework==3.14.0
+
+# --- Frontend / templates ---
+django-htmx==1.17.3
+django-widget-tweaks==1.5.0
+
+# --- Catalog / data ---
+django-mptt==0.16.0          # дерево категорий
+Pillow==10.2.0               # обработка изображений
+django-cleanup==8.1.0        # авто-удаление файлов при удалении объекта
+
+# --- Config / infra ---
+python-dotenv==1.0.1         # .env
+whitenoise==6.6.0            # раздача статики в проде
+dj-database-url==2.1.0       # URL БД для прода
+
+# --- Оплата ---
+yookassa==3.5.0              # ЮKassa (онлайн-оплата, СБП)
+
+# --- Prod DB (ставится при деплое) ---
+# psycopg2-binary==2.9.9

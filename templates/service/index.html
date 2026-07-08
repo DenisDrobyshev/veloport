@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% load shop_extras widget_tweaks %}
+{% block title %}Веломастерская — Veloport{% endblock %}
+
+{% block content %}
+<section class="bg-gradient-to-br from-brand-dark to-brand text-white">
+  <div class="max-w-7xl mx-auto px-4 py-12">
+    <h1 class="text-3xl md:text-4xl font-extrabold">🔧 Веломастерская</h1>
+    <p class="mt-3 text-white/90 max-w-xl">Профессиональное обслуживание любых велосипедов. Сертифицированные механики, оригинальные запчасти, гарантия на работы.</p>
+  </div>
+</section>
+
+<div class="max-w-7xl mx-auto px-4 py-10 grid lg:grid-cols-[1fr_400px] gap-8">
+  <div>
+    <h2 class="font-bold text-xl mb-4">Услуги и цены</h2>
+    <div class="grid sm:grid-cols-2 gap-3">
+      {% for s in services %}
+      <div class="bg-white rounded-2xl ring-1 ring-slate-100 p-4">
+        <div class="flex items-start justify-between">
+          <div class="text-2xl">{{ s.icon|default:"🔧" }}</div>
+          <div class="text-right"><div class="text-xs text-slate-400">от</div><div class="font-bold">{{ s.price_from|rub }}</div></div>
+        </div>
+        <div class="font-semibold mt-2">{{ s.name }}</div>
+        {% if s.description %}<div class="text-sm text-slate-500 mt-1">{{ s.description }}</div>{% endif %}
+        <div class="text-xs text-slate-400 mt-2">⏱ ~{{ s.duration_min }} мин</div>
+      </div>
+      {% empty %}
+      <p class="text-slate-500">Список услуг скоро появится.</p>
+      {% endfor %}
+    </div>
+  </div>
+
+  <div class="lg:sticky lg:top-24 h-fit bg-white rounded-2xl ring-1 ring-slate-100 p-6">
+    <h2 class="font-bold text-xl mb-4">Записаться</h2>
+    <form method="post" class="space-y-3">
+      {% csrf_token %}
+      {% render_field form.service_type class="w-full h-11 px-3 rounded-xl border border-slate-200 focus:border-brand outline-none" %}
+      {% render_field form.store class="w-full h-11 px-3 rounded-xl border border-slate-200 focus:border-brand outline-none" %}
+      {% render_field form.name placeholder="Ваше имя" class="w-full h-11 px-3 rounded-xl border border-slate-200 focus:border-brand outline-none" %}
+      {% render_field form.phone placeholder="Телефон" class="w-full h-11 px-3 rounded-xl border border-slate-200 focus:border-brand outline-none" %}
+      {% render_field form.bike_info placeholder="Велосипед (марка/модель)" class="w-full h-11 px-3 rounded-xl border border-slate-200 focus:border-brand outline-none" %}
+      <div class="grid grid-cols-2 gap-2">
+        {% render_field form.preferred_date class="w-full h-11 px-3 rounded-xl border border-slate-200 focus:border-brand outline-none" %}
+        {% render_field form.preferred_time placeholder="Время" class="w-full h-11 px-3 rounded-xl border border-slate-200 focus:border-brand outline-none" %}
+      </div>
+      {% render_field form.comment placeholder="Что беспокоит?" class="w-full px-3 py-2 rounded-xl border border-slate-200 focus:border-brand outline-none" %}
+      <button class="w-full h-11 rounded-xl bg-brand hover:bg-brand-dark text-white font-semibold">Записаться в мастерскую</button>
+    </form>
+  </div>
+</div>
+{% endblock %}

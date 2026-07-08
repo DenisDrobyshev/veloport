@@ -1,0 +1,41 @@
+{% load shop_extras %}
+<div class="group bg-white rounded-2xl ring-1 ring-slate-100 hover:shadow-xl hover:ring-brand/20 transition flex flex-col overflow-hidden">
+  <a href="{{ product.get_absolute_url }}" class="relative block aspect-square bg-slate-50 overflow-hidden">
+    {% if product.main_image %}
+      <img src="{{ product.main_image.url }}" alt="{{ product.title }}" loading="lazy"
+           class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
+    {% else %}
+      <div class="w-full h-full grid place-items-center text-6xl bg-gradient-to-br from-brand-50 to-slate-100">
+        {% if product.product_type == 'bike' or product.product_type == 'ebike' %}🚲{% elif product.product_type == 'apparel' %}👕{% elif product.product_type == 'protection' %}🪖{% else %}🔧{% endif %}
+      </div>
+    {% endif %}
+    <div class="absolute top-2 left-2 flex flex-col gap-1">
+      {% if product.has_discount %}<span class="bg-accent text-white text-xs font-bold px-2 py-0.5 rounded-md">−{{ product.discount_percent }}%</span>{% endif %}
+      {% if product.is_new %}<span class="bg-brand text-white text-xs font-bold px-2 py-0.5 rounded-md">NEW</span>{% endif %}
+      {% if product.is_bestseller %}<span class="bg-ink text-white text-xs font-bold px-2 py-0.5 rounded-md">ХИТ</span>{% endif %}
+    </div>
+  </a>
+  <div class="p-4 flex flex-col flex-1">
+    {% if product.brand %}<div class="text-xs text-slate-400 uppercase tracking-wide">{{ product.brand.name }}</div>{% endif %}
+    <a href="{{ product.get_absolute_url }}" class="mt-1 font-semibold leading-snug line-clamp-2 hover:text-brand min-h-[2.6rem]">{{ product.title }}</a>
+    <div class="mt-1 flex items-center gap-1 text-xs">
+      <span class="text-amber-400">{{ product.rating|stars }}</span>
+      <span class="text-slate-400">{% if product.reviews_count %}{{ product.reviews_count }} отз.{% else %}нет отзывов{% endif %}</span>
+    </div>
+    <div class="mt-auto pt-3">
+      <div class="flex items-end gap-2">
+        <span class="text-xl font-extrabold">{{ product.price|rub }}</span>
+        {% if product.has_discount %}<span class="text-sm text-slate-400 line-through mb-0.5">{{ product.old_price|rub }}</span>{% endif %}
+      </div>
+      <div class="mt-2 flex items-center gap-2">
+        <form hx-post="{% url 'cart:add' product.id %}" hx-target="#toast" hx-swap="beforeend" class="flex-1">
+          <button class="w-full h-10 rounded-xl bg-brand hover:bg-brand-dark text-white font-semibold text-sm transition">В корзину</button>
+        </form>
+        <form hx-post="{% url 'core:compare_add' product.id %}" hx-target="#toast" hx-swap="beforeend">
+          <button title="Добавить к сравнению" class="h-10 w-10 grid place-items-center rounded-xl ring-1 ring-slate-200 hover:ring-brand hover:text-brand transition">⚖️</button>
+        </form>
+      </div>
+      {% if not product.in_stock %}<div class="mt-1.5 text-xs text-amber-600">Под заказ</div>{% endif %}
+    </div>
+  </div>
+</div>

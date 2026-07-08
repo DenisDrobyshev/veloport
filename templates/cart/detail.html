@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block title %}Корзина — Veloport{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 py-6">
+  <h1 class="text-2xl md:text-3xl font-extrabold mb-6">Корзина</h1>
+  <div id="cart-content">
+    {% include "cart/_content.html" %}
+  </div>
+</div>
+{% endblock %}

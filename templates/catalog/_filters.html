@@ -1,0 +1,40 @@
+{% load shop_extras %}
+<div class="space-y-4">
+  <div class="bg-white rounded-2xl ring-1 ring-slate-100 p-4">
+    <h3 class="font-semibold mb-3 text-sm">Цена, ₽</h3>
+    <div class="flex gap-2">
+      <input type="number" name="price_min" value="{{ selected.price_min }}" placeholder="от"
+             class="w-1/2 h-9 px-2 rounded-lg border border-slate-200 text-sm focus:border-brand outline-none">
+      <input type="number" name="price_max" value="{{ selected.price_max }}" placeholder="до"
+             class="w-1/2 h-9 px-2 rounded-lg border border-slate-200 text-sm focus:border-brand outline-none">
+    </div>
+  </div>
+
+  <div class="bg-white rounded-2xl ring-1 ring-slate-100 p-4 space-y-2.5">
+    <label class="flex items-center gap-2 text-sm cursor-pointer"><input type="checkbox" name="in_stock" value="1" {% if selected.in_stock %}checked{% endif %} class="accent-brand w-4 h-4"> В наличии</label>
+    <label class="flex items-center gap-2 text-sm cursor-pointer"><input type="checkbox" name="discount" value="1" {% if selected.discount %}checked{% endif %} class="accent-brand w-4 h-4"> Со скидкой</label>
+    <label class="flex items-center gap-2 text-sm cursor-pointer"><input type="checkbox" name="electric" value="1" {% if selected.electric %}checked{% endif %} class="accent-brand w-4 h-4"> Электро ⚡</label>
+  </div>
+
+  {% if available_brands %}
+  <div class="bg-white rounded-2xl ring-1 ring-slate-100 p-4">
+    <h3 class="font-semibold mb-3 text-sm">Бренд</h3>
+    <div class="space-y-2 max-h-52 overflow-auto no-scrollbar">
+      {% for b in available_brands %}
+      <label class="flex items-center gap-2 text-sm cursor-pointer hover:text-brand">
+        <input type="checkbox" name="brand_f" value="{{ b.slug }}" {% if b.slug in selected.brand_f %}checked{% endif %} class="accent-brand w-4 h-4"> {{ b.name }}
+      </label>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+
+  {% include "catalog/_facet.html" with title="Размер колёс" name="wheel" options=facets.wheels chosen=selected.wheel %}
+  {% include "catalog/_facet.html" with title="Материал рамы" name="material" options=facets.materials chosen=selected.material %}
+  {% include "catalog/_facet.html" with title="Тормоза" name="brake" options=facets.brakes chosen=selected.brake %}
+  {% include "catalog/_facet.html" with title="Амортизация" name="suspension" options=facets.suspensions chosen=selected.suspension %}
+  {% include "catalog/_facet.html" with title="Ростовка рамы" name="frame_size" options=facets.frame_sizes chosen=selected.frame_size %}
+  {% include "catalog/_facet.html" with title="Пол / возраст" name="gender" options=facets.genders chosen=selected.gender %}
+
+  <a href="{{ request.path }}" class="block text-center text-sm text-brand hover:underline py-2">Сбросить всё</a>
+</div>
