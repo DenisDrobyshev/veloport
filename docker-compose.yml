@@ -1,0 +1,36 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: veloport
+      POSTGRES_USER: veloport
+      POSTGRES_PASSWORD: veloport
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U veloport"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  web:
+    build: .
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DEBUG: "False"
+      SECRET_KEY: "change-me-in-production"
+      ALLOWED_HOSTS: "*"
+      DATABASE_URL: "postgres://veloport:veloport@db:5432/veloport"
+      SEED: "1"                       # загрузить демо-данные при первом старте
+      # YOOKASSA_SHOP_ID: ""
+      # YOOKASSA_SECRET_KEY: ""
+    ports:
+      - "8000:8000"
+    volumes:
+      - media:/app/media
+
+volumes:
+  pgdata:
+  media:

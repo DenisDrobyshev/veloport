@@ -1,0 +1,4 @@
+# Скрипты запуска в контейнере всегда с LF, иначе ломается shebang
+*.sh text eol=lf
+docker-entrypoint.sh text eol=lf
+* text=auto
