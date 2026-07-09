@@ -136,8 +136,9 @@ YOOKASSA_SECRET_KEY=ваш_secret_key
 ## 🛠 Management-команды
 
 ```bash
-python manage.py seed_demo          # заполнить БД демо-данными (+ изображения)
-python manage.py gen_images         # сгенерировать изображения товаров
+python manage.py seed_demo          # заполнить БД демо-данными (+ схематичные изображения)
+python manage.py fetch_photos       # подтянуть реальные фото товаров (по типу, свободная лицензия)
+python manage.py gen_images         # сгенерировать схематичные изображения товаров
 python manage.py gen_images --force # перегенерировать все изображения
 ```
 

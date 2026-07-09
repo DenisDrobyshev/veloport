@@ -24,6 +24,7 @@ services:
       ALLOWED_HOSTS: "*"
       DATABASE_URL: "postgres://veloport:veloport@db:5432/veloport"
       SEED: "1"                       # загрузить демо-данные при первом старте
+      FETCH_PHOTOS: "1"               # подтянуть реальные фото товаров из интернета
       # YOOKASSA_SHOP_ID: ""
       # YOOKASSA_SECRET_KEY: ""
     ports:
