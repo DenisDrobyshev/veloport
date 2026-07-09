@@ -63,7 +63,8 @@ LOCAL_APPS = [
     "apps.content",
 ]
 
-INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
+# jazzmin должен идти ПЕРЕД django.contrib.admin
+INSTALLED_APPS = ["jazzmin"] + DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -181,3 +182,63 @@ FREE_SHIPPING_THRESHOLD = 5000  # бесплатная доставка от с�
 YOOKASSA_SHOP_ID = os.getenv("YOOKASSA_SHOP_ID", "")
 YOOKASSA_SECRET_KEY = os.getenv("YOOKASSA_SECRET_KEY", "")
 PAYMENTS_ENABLED = bool(YOOKASSA_SHOP_ID and YOOKASSA_SECRET_KEY)
+
+
+# --- Админка (Jazzmin) ---
+JAZZMIN_SETTINGS = {
+    "site_title": "Veloport Admin",
+    "site_header": "Veloport",
+    "site_brand": "VELOPORT",
+    "welcome_sign": "Панель управления магазином Veloport",
+    "copyright": "Veloport",
+    "search_model": ["catalog.Product", "orders.Order"],
+    "user_avatar": None,
+    "topmenu_links": [
+        {"name": "Открыть сайт", "url": "/", "new_window": True},
+        {"name": "Заказы", "model": "orders.order"},
+        {"name": "Товары", "model": "catalog.product"},
+    ],
+    "icons": {
+        "auth": "fas fa-users-cog",
+        "accounts.User": "fas fa-user",
+        "accounts.Address": "fas fa-map-marker-alt",
+        "catalog.Category": "fas fa-sitemap",
+        "catalog.Brand": "fas fa-tag",
+        "catalog.Product": "fas fa-bicycle",
+        "orders.Order": "fas fa-shopping-cart",
+        "reviews.Review": "fas fa-star",
+        "reviews.Question": "fas fa-question-circle",
+        "stores.Store": "fas fa-store",
+        "stores.Stock": "fas fa-boxes",
+        "stores.Reservation": "fas fa-bookmark",
+        "service.ServiceType": "fas fa-cogs",
+        "service.ServiceBooking": "fas fa-wrench",
+        "service.TradeInRequest": "fas fa-recycle",
+        "content.Article": "fas fa-newspaper",
+        "content.Page": "fas fa-file-alt",
+        "content.SizeChart": "fas fa-ruler-combined",
+        "content.FAQ": "fas fa-question",
+        "core.Banner": "fas fa-images",
+        "core.Subscriber": "fas fa-envelope",
+    },
+    "order_with_respect_to": [
+        "catalog", "orders", "stores", "service", "reviews", "content", "accounts", "core",
+    ],
+    "changeform_format": "horizontal_tabs",
+    "related_modal_active": True,
+    "show_ui_builder": False,
+}
+
+JAZZMIN_UI_TWEAKS = {
+    "theme": "flatly",
+    "dark_mode_theme": None,
+    "navbar": "navbar-dark",
+    "navbar_fixed": True,
+    "sidebar_fixed": True,
+    "sidebar": "sidebar-dark-primary",
+    "accent": "accent-danger",
+    "button_classes": {
+        "primary": "btn-outline-primary",
+        "success": "btn-outline-success",
+    },
+}

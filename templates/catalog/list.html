@@ -26,8 +26,8 @@
 
     <div class="flex items-center justify-between gap-3 mb-5">
       <button type="button" @click="fopen=!fopen"
-              class="lg:hidden flex items-center gap-2 h-10 px-4 rounded-xl bg-white ring-1 ring-slate-200 font-medium text-sm">
-        ⚙️ Фильтры
+              class="lg:hidden flex items-center gap-2 h-10 px-4 rounded border border-slate-300 bg-white font-semibold text-sm uppercase tracking-wide">
+        {% icon "menu" "w-4 h-4" %} Фильтры
       </button>
       <div class="flex items-center gap-2 ml-auto">
         <span id="grid-loading" class="htmx-indicator text-brand text-sm animate-pulse">обновляем…</span>

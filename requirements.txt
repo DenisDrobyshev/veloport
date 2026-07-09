@@ -5,6 +5,7 @@ djangorestframework==3.14.0
 # --- Frontend / templates ---
 django-htmx==1.17.3
 django-widget-tweaks==1.5.0
+django-jazzmin==3.0.1        # современная тема админки
 
 # --- Catalog / data ---
 django-mptt==0.16.0          # дерево категорий

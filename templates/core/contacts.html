@@ -1,35 +1,36 @@
 {% extends "base.html" %}
+{% load shop_extras %}
 {% block title %}Контакты — Veloport{% endblock %}
 
 {% block content %}
-<div class="max-w-5xl mx-auto px-4 py-8">
-  <h1 class="text-2xl md:text-3xl font-extrabold mb-6">Контакты</h1>
+<div class="max-w-8xl mx-auto px-4 py-10">
+  <h1 class="text-2xl md:text-3xl font-black uppercase tracking-tight mb-6">Контакты</h1>
   <div class="grid md:grid-cols-2 gap-4 mb-8">
-    <div class="bg-white rounded-2xl ring-1 ring-slate-100 p-6">
+    <div class="bg-white border border-slate-200 rounded-xl p-6">
       <h2 class="font-bold text-lg mb-3">Связаться с нами</h2>
-      <div class="space-y-2 text-slate-600">
-        <div>📞 <a href="tel:88005553535" class="font-semibold text-ink">8 800 555-35-35</a> — бесплатно по России</div>
-        <div>✉️ hello@veloport.ru</div>
-        <div>🕑 Ежедневно 9:00–21:00</div>
+      <div class="space-y-2.5 text-slate-600 text-sm">
+        <div class="flex items-center gap-2">{% icon "phone" "w-5 h-5 text-accent" %} <a href="tel:88005553535" class="font-bold text-ink">8 800 555-35-35</a> — бесплатно по России</div>
+        <div class="flex items-center gap-2">{% icon "chat" "w-5 h-5 text-slate-400" %} hello@veloport.ru</div>
+        <div class="flex items-center gap-2">{% icon "clock" "w-5 h-5 text-slate-400" %} Ежедневно 9:00–21:00</div>
       </div>
     </div>
-    <div class="bg-white rounded-2xl ring-1 ring-slate-100 p-6">
-      <h2 class="font-bold text-lg mb-3">Соцсети</h2>
-      <div class="flex gap-3 text-slate-600">
-        <span class="h-11 w-11 grid place-items-center rounded-xl bg-slate-100">VK</span>
-        <span class="h-11 w-11 grid place-items-center rounded-xl bg-slate-100">TG</span>
-        <span class="h-11 w-11 grid place-items-center rounded-xl bg-slate-100">YT</span>
+    <div class="bg-white border border-slate-200 rounded-xl p-6">
+      <h2 class="font-bold text-lg mb-3">Мы в соцсетях</h2>
+      <div class="flex gap-3 text-slate-600 font-bold">
+        <span class="h-11 w-11 grid place-items-center rounded bg-slate-100">VK</span>
+        <span class="h-11 w-11 grid place-items-center rounded bg-slate-100">TG</span>
+        <span class="h-11 w-11 grid place-items-center rounded bg-slate-100">YT</span>
       </div>
     </div>
   </div>
 
-  <h2 class="font-bold text-lg mb-4">Магазины</h2>
+  <h2 class="font-black text-lg uppercase tracking-tight mb-4">Магазины</h2>
   <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
     {% for store in stores %}
-    <a href="{% url 'stores:detail' store.slug %}" class="bg-white rounded-2xl ring-1 ring-slate-100 p-5 hover:ring-brand transition">
+    <a href="{% url 'stores:detail' store.slug %}" class="bg-white border border-slate-200 rounded-xl p-5 hover:border-ink transition">
       <div class="font-bold">{{ store.name }}</div>
-      <div class="text-sm text-slate-500 mt-1">📍 {{ store.city }}, {{ store.address }}</div>
-      <div class="text-sm text-slate-500">🕑 {{ store.work_hours }}</div>
+      <div class="text-sm text-slate-500 mt-1 flex items-center gap-2">{% icon "pin" "w-4 h-4 text-accent" %} {{ store.city }}, {{ store.address }}</div>
+      <div class="text-sm text-slate-500 flex items-center gap-2 mt-1">{% icon "clock" "w-4 h-4 text-slate-400" %} {{ store.work_hours }}</div>
     </a>
     {% endfor %}
   </div>

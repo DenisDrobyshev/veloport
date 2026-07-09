@@ -4,18 +4,18 @@
 
 {% block content %}
 <div class="max-w-2xl mx-auto px-4 py-12">
-  <div class="bg-white rounded-3xl ring-1 ring-slate-100 p-8 text-center">
-    <div class="text-6xl">🎉</div>
-    <h1 class="text-2xl font-extrabold mt-4">Спасибо за заказ!</h1>
+  <div class="bg-white border border-slate-200 rounded-2xl p-8 text-center">
+    <span class="inline-grid place-items-center w-16 h-16 rounded-full bg-accent/10 text-accent mx-auto">{% icon "check" "w-8 h-8" %}</span>
+    <h1 class="text-2xl font-black uppercase tracking-tight mt-4">Спасибо за заказ!</h1>
     <p class="text-slate-500 mt-2">Заказ <b class="text-ink">№ {{ order.number }}</b> принят. Мы свяжемся с вами для подтверждения.</p>
 
     {% if order.needs_payment %}
     <div class="mt-5 bg-amber-50 rounded-2xl p-5">
-      <div class="font-semibold text-amber-800">⏳ Заказ ожидает оплаты</div>
+      <div class="font-semibold text-amber-800">Заказ ожидает оплаты</div>
       <a href="{% url 'orders:pay' order.number %}" class="inline-block mt-3 h-11 px-6 leading-[44px] rounded-xl bg-brand text-white font-bold">Оплатить {{ order.total|rub }}</a>
     </div>
     {% elif order.is_paid %}
-    <div class="mt-5 bg-brand-50 text-brand-dark rounded-2xl p-3 font-semibold">✅ Заказ оплачен</div>
+    <div class="mt-5 bg-slate-100 text-ink rounded-xl p-3 font-semibold flex items-center justify-center gap-2">{% icon "check" "w-5 h-5 text-accent" %} Заказ оплачен</div>
     {% endif %}
 
     <div class="mt-6 text-left bg-slate-50 rounded-2xl p-5">

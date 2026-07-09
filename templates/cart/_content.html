@@ -1,34 +1,34 @@
 {% load shop_extras %}
 {% if cart.is_empty %}
-<div class="bg-white rounded-2xl ring-1 ring-slate-100 py-20 text-center">
-  <div class="text-6xl">🛒</div>
-  <p class="mt-4 text-lg font-semibold">Корзина пуста</p>
-  <p class="text-slate-500 mt-1">Самое время выбрать велосипед мечты</p>
-  <a href="{% url 'catalog:list' %}" class="inline-block mt-5 h-11 px-6 leading-[44px] rounded-xl bg-brand text-white font-semibold">В каталог</a>
+<div class="bg-white border border-slate-200 rounded-xl py-20 text-center">
+  <span class="inline-grid place-items-center text-slate-300">{% icon "cart" "w-16 h-16" %}</span>
+  <p class="mt-4 text-lg font-bold">Корзина пуста</p>
+  <p class="text-slate-500 mt-1">Самое время выбрать велосипед</p>
+  <a href="{% url 'catalog:list' %}" class="inline-flex items-center h-11 px-6 mt-5 rounded bg-ink hover:bg-brand-light text-white font-semibold uppercase tracking-wide text-sm">В каталог</a>
 </div>
 {% else %}
 <div class="grid grid-cols-1 lg:grid-cols-[1fr_360px] gap-6">
   <div class="space-y-3">
     {% for item in cart %}
-    <div class="bg-white rounded-2xl ring-1 ring-slate-100 p-4 flex gap-4">
-      <a href="{{ item.product.get_absolute_url }}" class="w-24 h-24 shrink-0 rounded-xl bg-slate-50 grid place-items-center overflow-hidden">
-        {% if item.product.main_image %}<img src="{{ item.product.main_image.url }}" class="w-full h-full object-cover">{% else %}<span class="text-3xl">🚲</span>{% endif %}
+    <div class="bg-white border border-slate-200 rounded-xl p-4 flex gap-4">
+      <a href="{{ item.product.get_absolute_url }}" class="w-24 h-24 shrink-0 rounded-lg bg-slate-50 grid place-items-center overflow-hidden border border-slate-100">
+        {% if item.product.main_image %}<img src="{{ item.product.main_image.url }}" class="w-full h-full object-cover">{% else %}<span class="text-slate-300">{% icon "box" "w-8 h-8" %}</span>{% endif %}
       </a>
       <div class="flex-1 min-w-0">
-        <a href="{{ item.product.get_absolute_url }}" class="font-semibold hover:text-brand line-clamp-2">{{ item.product.title }}</a>
-        {% if item.variant %}<div class="text-xs text-slate-500">{{ item.variant.group }}: {{ item.variant.value }}</div>{% endif %}
+        <a href="{{ item.product.get_absolute_url }}" class="font-semibold hover:text-accent line-clamp-2">{{ item.product.title }}</a>
+        {% if item.variant %}<div class="text-xs text-slate-500 mt-0.5">{{ item.variant.group }}: {{ item.variant.value }}</div>{% endif %}
         <div class="text-sm text-slate-500 mt-0.5">{{ item.price|rub }} / шт</div>
         <div class="mt-2 flex items-center justify-between">
-          <div class="flex items-center rounded-lg ring-1 ring-slate-200 h-9">
-            <button hx-post="{% url 'cart:update' item.key %}" hx-vals='{"qty": {{ item.qty|add:"-1" }} }' hx-target="#cart-content" hx-swap="innerHTML" class="w-9 h-full">−</button>
-            <span class="w-8 text-center text-sm font-semibold">{{ item.qty }}</span>
-            <button hx-post="{% url 'cart:update' item.key %}" hx-vals='{"qty": {{ item.qty|add:"1" }} }' hx-target="#cart-content" hx-swap="innerHTML" class="w-9 h-full">+</button>
+          <div class="flex items-center rounded-lg border border-slate-200 h-9">
+            <button hx-post="{% url 'cart:update' item.key %}" hx-vals='{"qty": {{ item.qty|add:"-1" }} }' hx-target="#cart-content" hx-swap="innerHTML" class="w-9 h-full grid place-items-center text-slate-600 hover:text-ink">{% icon "minus" "w-4 h-4" %}</button>
+            <span class="w-9 text-center text-sm font-bold">{{ item.qty }}</span>
+            <button hx-post="{% url 'cart:update' item.key %}" hx-vals='{"qty": {{ item.qty|add:"1" }} }' hx-target="#cart-content" hx-swap="innerHTML" class="w-9 h-full grid place-items-center text-slate-600 hover:text-ink">{% icon "plus" "w-4 h-4" %}</button>
           </div>
-          <div class="font-bold">{{ item.total|rub }}</div>
+          <div class="font-black">{{ item.total|rub }}</div>
         </div>
       </div>
       <button hx-post="{% url 'cart:remove' item.key %}" hx-target="#cart-content" hx-swap="innerHTML" title="Удалить"
-              class="self-start text-slate-300 hover:text-accent text-xl">✕</button>
+              class="self-start text-slate-300 hover:text-accent">{% icon "x" "w-5 h-5" %}</button>
     </div>
     {% endfor %}
     <div class="text-right">
@@ -36,18 +36,17 @@
     </div>
   </div>
 
-  <div class="lg:sticky lg:top-24 h-fit bg-white rounded-2xl ring-1 ring-slate-100 p-5">
+  <div class="lg:sticky lg:top-28 h-fit bg-white border border-slate-200 rounded-xl p-5">
     <h3 class="font-bold text-lg mb-4">Итого</h3>
     <div class="space-y-2 text-sm">
       <div class="flex justify-between"><span class="text-slate-500">Товары ({{ cart|length }})</span><span>{{ cart.total|rub }}</span></div>
-      <div class="flex justify-between"><span class="text-slate-500">Доставка</span><span>{% if cart.shipping %}{{ cart.shipping|rub }}{% else %}<span class="text-brand">Бесплатно</span>{% endif %}</span></div>
+      <div class="flex justify-between"><span class="text-slate-500">Доставка</span><span>{% if cart.shipping %}{{ cart.shipping|rub }}{% else %}<span class="text-green-600 font-semibold">Бесплатно</span>{% endif %}</span></div>
     </div>
     <div class="border-t border-slate-100 mt-3 pt-3 flex justify-between items-center">
       <span class="font-semibold">К оплате</span>
-      <span class="text-2xl font-extrabold">{{ cart.grand_total|rub }}</span>
+      <span class="text-2xl font-black">{{ cart.grand_total|rub }}</span>
     </div>
-    <a href="{% url 'orders:checkout' %}" class="mt-4 block text-center h-12 leading-[48px] rounded-xl bg-accent hover:bg-accent-dark text-white font-bold">Оформить заказ</a>
-    {% if cart.shipping %}<p class="mt-3 text-xs text-slate-400 text-center">До бесплатной доставки: {{ cart.shipping|rub }} … добавьте товаров</p>{% endif %}
+    <a href="{% url 'orders:checkout' %}" class="mt-4 flex items-center justify-center h-12 rounded bg-accent hover:bg-accent-dark text-white font-bold uppercase tracking-wide">Оформить заказ</a>
   </div>
 </div>
 {% endif %}

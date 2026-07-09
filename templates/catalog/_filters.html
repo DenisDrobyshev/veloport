@@ -13,7 +13,7 @@
   <div class="bg-white rounded-2xl ring-1 ring-slate-100 p-4 space-y-2.5">
     <label class="flex items-center gap-2 text-sm cursor-pointer"><input type="checkbox" name="in_stock" value="1" {% if selected.in_stock %}checked{% endif %} class="accent-brand w-4 h-4"> В наличии</label>
     <label class="flex items-center gap-2 text-sm cursor-pointer"><input type="checkbox" name="discount" value="1" {% if selected.discount %}checked{% endif %} class="accent-brand w-4 h-4"> Со скидкой</label>
-    <label class="flex items-center gap-2 text-sm cursor-pointer"><input type="checkbox" name="electric" value="1" {% if selected.electric %}checked{% endif %} class="accent-brand w-4 h-4"> Электро ⚡</label>
+    <label class="flex items-center gap-2 text-sm cursor-pointer"><input type="checkbox" name="electric" value="1" {% if selected.electric %}checked{% endif %} class="accent-brand w-4 h-4"> Электро</label>
   </div>
 
   {% if available_brands %}

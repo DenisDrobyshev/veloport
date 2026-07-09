@@ -54,6 +54,54 @@ BIKES = [
     ("Cube Reaction Hybrid Pro", "Cube", "electro", 329990, None, "29", "alu", "L", "disc_hydraulic", "hardtail", 12, 22.0, True),
     ("Format E-Bike 1", "Format", "electro", 149990, 169990, "27.5", "alu", "M", "disc_hydraulic", "hardtail", 9, 24.0, True),
     ("Eltreco XT 800 New", "Eltreco", "electro", 89990, None, "26", "alu", "M", "disc_mech", "hardtail", 21, 28.0, True),
+    # Горные (доп.)
+    ("Cannondale Trail 6", "Cannondale", "gornye", 84990, None, "29", "alu", "M", "disc_hydraulic", "hardtail", 18, 14.0, False),
+    ("GT Aggressor Expert", "GT", "gornye", 59990, 69990, "27.5", "alu", "M", "disc_mech", "hardtail", 21, 15.0, False),
+    ("Focus Whistler 3.7", "Focus", "gornye", 99990, None, "29", "alu", "L", "disc_hydraulic", "hardtail", 20, 13.5, False),
+    ("Marin Bobcat Trail 3", "Marin", "gornye", 89990, None, "29", "alu", "M", "disc_hydraulic", "hardtail", 16, 14.2, False),
+    ("Norco Storm 3", "Norco", "gornye", 74990, None, "27.5", "alu", "S", "disc_hydraulic", "hardtail", 16, 14.5, False),
+    ("Polygon Cascade 3", "Polygon", "gornye", 64990, None, "29", "alu", "M", "disc_mech", "hardtail", 18, 14.8, False),
+    ("Merida One-Forty 400", "Merida", "gornye", 229990, None, "29", "alu", "L", "disc_hydraulic", "full", 12, 15.5, False),
+    ("Scott Scale 970", "Scott", "gornye", 119990, 134990, "29", "alu", "L", "disc_hydraulic", "hardtail", 24, 12.8, False),
+    ("Forward Sporting 29", "Forward", "gornye", 29990, None, "29", "alu", "M", "disc_mech", "hardtail", 21, 15.8, False),
+    ("Stels Navigator 720 MD", "Stels", "gornye", 39990, None, "27.5", "alu", "M", "disc_mech", "hardtail", 24, 15.0, False),
+    # Шоссейные (доп.)
+    ("Cannondale CAAD13 105", "Cannondale", "shosseynye", 219990, None, "700c", "alu", "M", "disc_hydraulic", "rigid", 22, 8.9, False),
+    ("GT GTR Comp", "GT", "shosseynye", 74990, None, "700c", "alu", "M", "rim", "rigid", 16, 10.6, False),
+    ("Focus Izalco Race", "Focus", "shosseynye", 259990, None, "700c", "carbon", "L", "disc_hydraulic", "rigid", 22, 8.2, False),
+    ("Bianchi Via Nirone 7", "Bianchi", "shosseynye", 139990, None, "700c", "alu", "M", "rim", "rigid", 18, 9.6, False),
+    ("Cervelo Caledonia 105", "Cervelo", "shosseynye", 329990, None, "700c", "carbon", "L", "disc_hydraulic", "rigid", 22, 8.4, False),
+    # Гравийные (доп.)
+    ("Cannondale Topstone 3", "Cannondale", "gravel", 149990, None, "700c", "alu", "M", "disc_hydraulic", "rigid", 18, 11.0, False),
+    ("Focus Atlas 6.7", "Focus", "gravel", 169990, None, "700c", "alu", "L", "disc_hydraulic", "rigid", 20, 10.6, False),
+    ("Marin Nicasio", "Marin", "gravel", 99990, None, "700c", "steel", "M", "disc_mech", "rigid", 16, 11.5, False),
+    # Городские (доп.)
+    ("Cannondale Quick 5", "Cannondale", "gorodskie", 74990, None, "700c", "alu", "M", "v_brake", "rigid", 21, 12.0, False),
+    ("Marin Presidio 1", "Marin", "gorodskie", 69990, None, "700c", "alu", "M", "disc_mech", "rigid", 8, 12.2, False),
+    ("Shulz Roadkiller", "Shulz", "gorodskie", 44990, None, "700c", "alu", "M", "v_brake", "rigid", 7, 12.8, False),
+    ("Welt London", "Welt", "gorodskie", 34990, 39990, "28", "alu", "M", "v_brake", "rigid", 7, 13.5, False),
+    # Детские (доп.)
+    ("Forward Cosmo 12", "Forward", "detskie", 9990, None, "12", "steel", "XS", "v_brake", "rigid", 1, 8.5, False),
+    ("Shulz Bubble 16", "Shulz", "detskie", 18990, None, "16", "alu", "XS", "v_brake", "rigid", 1, 8.8, False),
+    ("GT Siren 24", "GT", "detskie", 34990, None, "24", "alu", "XS", "disc_mech", "hardtail", 8, 12.0, False),
+    ("Welt Peak 20", "Welt", "detskie", 19990, 22990, "20", "steel", "XS", "v_brake", "rigid", 6, 11.0, False),
+    # Электро (доп.)
+    ("Cube Reaction Hybrid One 500", "Cube", "electro", 279990, None, "29", "alu", "M", "disc_hydraulic", "hardtail", 10, 23.0, True),
+    ("Haibike Trekking 4", "Haibike", "electro", 249990, None, "28", "alu", "L", "disc_hydraulic", "rigid", 10, 25.0, True),
+    ("Eltreco Ultra Max", "Eltreco", "electro", 119990, 139990, "26", "alu", "M", "disc_mech", "hardtail", 21, 30.0, True),
+    ("Forward Cyclone 27", "Forward", "electro", 99990, None, "27.5", "alu", "M", "disc_mech", "hardtail", 7, 26.0, True),
+    # Фэтбайки
+    ("Stels Aggressor Fat", "Stels", "fatbike", 54990, None, "26", "alu", "M", "disc_mech", "hardtail", 7, 18.5, False),
+    ("Welt Bighorn Fat", "Welt", "fatbike", 64990, None, "26", "alu", "L", "disc_hydraulic", "hardtail", 9, 18.0, False),
+    # BMX
+    ("Haro Downtown 20", "Haro", "bmx", 34990, None, "20", "chromoly", "S", "v_brake", "rigid", 1, 11.5, False),
+    ("Mongoose Legion L60", "Mongoose", "bmx", 29990, 34990, "20", "chromoly", "S", "v_brake", "rigid", 1, 11.8, False),
+    # Складные
+    ("Shulz Krabi V", "Shulz", "folding", 39990, None, "20", "alu", "M", "v_brake", "rigid", 7, 13.0, False),
+    ("Forward Enigma 20", "Forward", "folding", 27990, None, "20", "alu", "M", "v_brake", "rigid", 6, 13.5, False),
+    # Гибриды
+    ("Cube Nature Pro", "Cube", "hybrid", 89990, None, "700c", "alu", "L", "disc_hydraulic", "rigid", 20, 12.5, False),
+    ("Marin Fairfax 2", "Marin", "hybrid", 64990, None, "700c", "alu", "M", "disc_mech", "rigid", 16, 12.8, False),
 ]
 
 # (title, brand, cat, price, old, ptype, emoji_type)
@@ -68,6 +116,13 @@ GEAR = [
     ("Велоперчатки Fox Ranger", "Fox", "ekipirovka", 2490, None, Product.TYPE_APPAREL),
     ("Веломайка Craft Essence", "Craft", "ekipirovka", 3990, 4990, Product.TYPE_APPAREL),
     ("Велорюкзак Deuter Race", "Deuter", "ekipirovka", 7990, None, Product.TYPE_ACCESSORY),
+    ("Шлем Bell Tracker", "Bell", "shlemy", 6990, None, Product.TYPE_PROTECTION),
+    ("Перчатки Giro DND", "Giro", "ekipirovka", 2990, None, Product.TYPE_APPAREL),
+    ("Насос напольный BBB AirBoost", "BBB", "nasosy", 4990, None, Product.TYPE_ACCESSORY),
+    ("Велозамок ABUS Bordo", "ABUS", "zamki", 8990, None, Product.TYPE_ACCESSORY),
+    ("Фонарь задний Cateye Rapid", "Cateye", "fary", 1990, None, Product.TYPE_ACCESSORY),
+    ("Фляга Camelbak Podium", "Camelbak", "flyagi", 1490, None, Product.TYPE_ACCESSORY),
+    ("Веломайка Craft Pro", "Craft", "ekipirovka", 4990, 5990, Product.TYPE_APPAREL),
 ]
 
 CATEGORIES = [
@@ -79,6 +134,10 @@ CATEGORIES = [
     ("Гравийные", "gravel", "🌾", "velosipedy"),
     ("Детские", "detskie", "🧒", "velosipedy"),
     ("Электровелосипеды", "electro", "⚡", "velosipedy"),
+    ("Фэтбайки", "fatbike", "🏔", "velosipedy"),
+    ("BMX", "bmx", "🛞", "velosipedy"),
+    ("Складные", "folding", "🧳", "velosipedy"),
+    ("Гибриды", "hybrid", "🔀", "velosipedy"),
     ("Аксессуары", "accessories", "🧰", None),
     ("Шлемы и защита", "shlemy", "🪖", "accessories"),
     ("Замки", "zamki", "🔒", "accessories"),
@@ -94,9 +153,17 @@ BRANDS = [
     ("Author", "Чехия"), ("Eltreco", "Россия"), ("Giro", "США"), ("Kryptonite", "США"),
     ("Topeak", "Тайвань"), ("Cateye", "Япония"), ("Zefal", "Франция"), ("Fox", "США"),
     ("Craft", "Швеция"), ("Deuter", "Германия"),
+    ("Cannondale", "США"), ("GT", "США"), ("Focus", "Германия"), ("Marin", "США"),
+    ("Norco", "Канада"), ("Polygon", "Индонезия"), ("Forward", "Россия"), ("Shulz", "Россия"),
+    ("Welt", "Россия"), ("Haibike", "Германия"), ("Bianchi", "Италия"), ("Cervelo", "Канада"),
+    ("Haro", "США"), ("Mongoose", "США"), ("Bell", "США"), ("BBB", "Нидерланды"),
+    ("ABUS", "Германия"), ("Camelbak", "США"),
 ]
 
-FEATURED_BRANDS = {"Trek", "Giant", "Merida", "Cube", "Scott", "Specialized"}
+FEATURED_BRANDS = {
+    "Trek", "Giant", "Merida", "Cube", "Scott", "Specialized",
+    "Cannondale", "GT", "Focus", "Marin",
+}
 
 REVIEW_SNIPPETS = [
     ("Отличный велосипед!", "Лёгкий, накатистый", "Педали простоватые", 5),

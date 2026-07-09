@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% load shop_extras %}
-{% block title %}Сравнение — Veloport{% endblock %}
+{% block title %}Сравнение товаров — Veloport{% endblock %}
 
 {% block content %}
 <div class="max-w-7xl mx-auto px-4 py-8">
@@ -18,7 +18,7 @@
           {% for p in products %}
           <th class="p-4 align-top min-w-[200px] border-l border-slate-100">
             <a href="{{ p.get_absolute_url }}" class="block w-full aspect-square rounded-xl bg-slate-50 grid place-items-center overflow-hidden mb-2">
-              {% if p.main_image %}<img src="{{ p.main_image.url }}" class="w-full h-full object-cover">{% else %}<span class="text-4xl">🚲</span>{% endif %}
+              {% if p.main_image %}<img src="{{ p.main_image.url }}" class="w-full h-full object-cover">{% else %}<span class="text-slate-300">{% icon "box" "w-8 h-8" %}</span>{% endif %}
             </a>
             <a href="{{ p.get_absolute_url }}" class="font-semibold text-left block hover:text-brand line-clamp-2">{{ p.title }}</a>
             <form method="post" action="{% url 'core:compare_remove' p.id %}" class="mt-1">{% csrf_token %}<button class="text-xs text-slate-400 hover:text-accent">Убрать ✕</button></form>
@@ -40,11 +40,11 @@
     </table>
   </div>
   {% else %}
-  <div class="bg-white rounded-2xl ring-1 ring-slate-100 py-20 text-center">
-    <div class="text-6xl">⚖️</div>
-    <p class="mt-4 text-lg font-semibold">Список сравнения пуст</p>
-    <p class="text-slate-500 mt-1">Добавляйте товары кнопкой ⚖️ в каталоге</p>
-    <a href="{% url 'catalog:list' %}" class="inline-block mt-5 h-11 px-6 leading-[44px] rounded-xl bg-brand text-white font-semibold">В каталог</a>
+  <div class="bg-white border border-slate-200 rounded-xl py-20 text-center">
+    <span class="inline-grid place-items-center text-slate-300">{% icon "compare" "w-14 h-14" %}</span>
+    <p class="mt-4 text-lg font-bold">Список сравнения пуст</p>
+    <p class="text-slate-500 mt-1">Добавляйте товары кнопкой сравнения в каталоге</p>
+    <a href="{% url 'catalog:list' %}" class="inline-flex items-center h-11 px-6 mt-5 rounded bg-ink hover:bg-brand-light text-white font-semibold uppercase tracking-wide text-sm">В каталог</a>
   </div>
   {% endif %}
 </div>

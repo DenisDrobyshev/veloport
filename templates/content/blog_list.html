@@ -1,27 +1,28 @@
 {% extends "base.html" %}
+{% load shop_extras %}
 {% block title %}Блог и гайды — Veloport{% endblock %}
 
 {% block content %}
-<div class="max-w-7xl mx-auto px-4 py-8">
-  <h1 class="text-2xl md:text-3xl font-extrabold mb-5">Блог и гайды</h1>
+<div class="max-w-8xl mx-auto px-4 py-10">
+  <h1 class="text-2xl md:text-3xl font-black uppercase tracking-tight mb-5">Блог и гайды</h1>
   <div class="flex flex-wrap gap-2 mb-6">
-    <a href="{% url 'content:blog' %}" class="h-9 px-4 leading-[36px] rounded-full text-sm font-medium {% if not active_category %}bg-brand text-white{% else %}bg-white ring-1 ring-slate-200{% endif %}">Все</a>
+    <a href="{% url 'content:blog' %}" class="h-9 px-4 leading-[36px] rounded text-sm font-semibold uppercase tracking-wide {% if not active_category %}bg-ink text-white{% else %}bg-white border border-slate-200 text-slate-600 hover:border-ink{% endif %}">Все</a>
     {% for val, label in categories %}
-    <a href="?category={{ val }}" class="h-9 px-4 leading-[36px] rounded-full text-sm font-medium {% if active_category == val %}bg-brand text-white{% else %}bg-white ring-1 ring-slate-200{% endif %}">{{ label }}</a>
+    <a href="?category={{ val }}" class="h-9 px-4 leading-[36px] rounded text-sm font-semibold uppercase tracking-wide {% if active_category == val %}bg-ink text-white{% else %}bg-white border border-slate-200 text-slate-600 hover:border-ink{% endif %}">{{ label }}</a>
     {% endfor %}
   </div>
 
   <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
     {% for a in articles %}
-    <a href="{{ a.get_absolute_url }}" class="bg-white rounded-2xl ring-1 ring-slate-100 overflow-hidden hover:shadow-lg transition flex flex-col">
-      <div class="aspect-[16/9] bg-gradient-to-br from-brand-50 to-slate-100 grid place-items-center overflow-hidden">
-        {% if a.cover %}<img src="{{ a.cover.url }}" class="w-full h-full object-cover">{% else %}<span class="text-5xl">📄</span>{% endif %}
+    <a href="{{ a.get_absolute_url }}" class="bg-white border border-slate-200 rounded-xl overflow-hidden hover:border-ink hover:shadow-lg transition flex flex-col">
+      <div class="aspect-[16/9] bg-slate-100 grid place-items-center overflow-hidden text-slate-300">
+        {% if a.cover %}<img src="{{ a.cover.url }}" class="w-full h-full object-cover">{% else %}{% icon "chat" "w-12 h-12" %}{% endif %}
       </div>
       <div class="p-5 flex flex-col flex-1">
-        <span class="text-xs text-brand font-semibold uppercase">{{ a.get_category_display }}</span>
+        <span class="text-[11px] text-accent font-bold uppercase tracking-widest">{{ a.get_category_display }}</span>
         <h3 class="font-bold mt-1 leading-snug line-clamp-2">{{ a.title }}</h3>
         <p class="text-sm text-slate-500 mt-1 line-clamp-2">{{ a.excerpt }}</p>
-        <div class="mt-auto pt-3 text-xs text-slate-400">{{ a.published_at|date:"d.m.Y" }} · ⏱ {{ a.reading_time }} мин</div>
+        <div class="mt-auto pt-3 text-xs text-slate-400 flex items-center gap-1">{% icon "clock" "w-3.5 h-3.5" %} {{ a.published_at|date:"d.m.Y" }} · {{ a.reading_time }} мин</div>
       </div>
     </a>
     {% empty %}

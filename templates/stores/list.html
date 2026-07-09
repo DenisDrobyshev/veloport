@@ -1,21 +1,22 @@
 {% extends "base.html" %}
+{% load shop_extras %}
 {% block title %}Магазины — Veloport{% endblock %}
 
 {% block content %}
-<div class="max-w-7xl mx-auto px-4 py-8">
-  <h1 class="text-2xl md:text-3xl font-extrabold mb-2">Наши магазины</h1>
+<div class="max-w-8xl mx-auto px-4 py-10">
+  <h1 class="text-2xl md:text-3xl font-black uppercase tracking-tight mb-1">Наши магазины</h1>
   <p class="text-slate-500 mb-6">Приезжайте на тест-драйв или заберите онлайн-заказ</p>
   <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
     {% for store in stores %}
-    <a href="{% url 'stores:detail' store.slug %}" class="bg-white rounded-2xl ring-1 ring-slate-100 p-5 hover:ring-brand hover:shadow-lg transition">
+    <a href="{% url 'stores:detail' store.slug %}" class="bg-white border border-slate-200 rounded-xl p-5 hover:border-ink hover:shadow-lg transition">
       <div class="flex items-start justify-between">
         <h3 class="font-bold text-lg">{{ store.name }}</h3>
-        {% if store.has_service %}<span class="text-xs bg-brand-50 text-brand-dark px-2 py-1 rounded-full">🔧 мастерская</span>{% endif %}
+        {% if store.has_service %}<span class="text-xs bg-slate-100 text-slate-600 font-semibold px-2 py-1 rounded">мастерская</span>{% endif %}
       </div>
-      <div class="mt-2 text-sm text-slate-500 space-y-1">
-        <div>📍 {{ store.city }}, {{ store.address }}</div>
-        <div>🕑 {{ store.work_hours }}</div>
-        {% if store.phone %}<div>📞 {{ store.phone }}</div>{% endif %}
+      <div class="mt-3 text-sm text-slate-500 space-y-1.5">
+        <div class="flex items-center gap-2">{% icon "pin" "w-4 h-4 text-accent" %} {{ store.city }}, {{ store.address }}</div>
+        <div class="flex items-center gap-2">{% icon "clock" "w-4 h-4 text-slate-400" %} {{ store.work_hours }}</div>
+        {% if store.phone %}<div class="flex items-center gap-2">{% icon "phone" "w-4 h-4 text-slate-400" %} {{ store.phone }}</div>{% endif %}
       </div>
     </a>
     {% empty %}

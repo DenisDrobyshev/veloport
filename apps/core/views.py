@@ -16,12 +16,16 @@ def home(request):
         .select_related("brand")
         .prefetch_related("images", "bike")
     )
+    velo = Category.objects.filter(slug="velosipedy").first()
+    bike_categories = velo.get_children().filter(is_active=True) if velo else Category.objects.none()
+
     context = {
         "banners": Banner.objects.filter(is_active=True),
         "featured": products.filter(is_featured=True)[:8],
         "new_arrivals": products.filter(is_new=True)[:8],
         "bestsellers": products.filter(is_bestseller=True)[:8],
         "discounted": products.with_discount()[:8],
+        "bike_categories": bike_categories,
         "categories": Category.objects.filter(is_active=True, level=0),
         "brands": Brand.objects.filter(is_active=True, is_featured=True)[:12],
     }

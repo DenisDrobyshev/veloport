@@ -8,9 +8,9 @@
 </div>
 {% include "partials/pagination.html" %}
 {% else %}
-<div class="text-center py-24 bg-white rounded-2xl ring-1 ring-slate-100">
-  <div class="text-6xl">🔍</div>
-  <p class="mt-4 text-lg font-semibold">Ничего не найдено</p>
+<div class="text-center py-24 bg-white border border-slate-200 rounded-xl">
+  <span class="inline-grid place-items-center text-slate-300">{% icon "search" "w-14 h-14" %}</span>
+  <p class="mt-4 text-lg font-bold">Ничего не найдено</p>
   <p class="text-slate-500 mt-1">Попробуйте ослабить фильтры или сбросить их</p>
 </div>
 {% endif %}

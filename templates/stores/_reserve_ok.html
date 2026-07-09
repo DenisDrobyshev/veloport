@@ -1,4 +1,5 @@
-<div class="bg-brand-50 text-brand-dark rounded-xl p-4 text-sm">
-  ✅ Товар зарезервирован! Номер брони <b>{{ reservation.number }}</b>.<br>
-  Мы позвоним на {{ reservation.phone }} и придержим товар в «{{ reservation.store.name }}».
+{% load shop_extras %}
+<div class="bg-slate-50 border border-slate-200 rounded-lg p-4 text-sm flex gap-3">
+  <span class="text-accent shrink-0">{% icon "check" "w-5 h-5" %}</span>
+  <div>Товар зарезервирован. Номер брони <b>{{ reservation.number }}</b>.<br>Мы позвоним на {{ reservation.phone }} и придержим товар в «{{ reservation.store.name }}».</div>
 </div>

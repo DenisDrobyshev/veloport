@@ -60,7 +60,7 @@
         {% for item in cart %}
         <div class="flex gap-3 text-sm">
           <div class="w-12 h-12 shrink-0 rounded-lg bg-slate-50 grid place-items-center overflow-hidden">
-            {% if item.product.main_image %}<img src="{{ item.product.main_image.url }}" class="w-full h-full object-cover">{% else %}🚲{% endif %}
+            {% if item.product.main_image %}<img src="{{ item.product.main_image.url }}" class="w-full h-full object-cover">{% else %}<span class="text-slate-300">{% icon "box" "w-6 h-6" %}</span>{% endif %}
           </div>
           <div class="flex-1 min-w-0"><div class="line-clamp-1">{{ item.product.title }}</div><div class="text-slate-400">{{ item.qty }} × {{ item.price|rub }}</div></div>
           <div class="font-semibold whitespace-nowrap">{{ item.total|rub }}</div>

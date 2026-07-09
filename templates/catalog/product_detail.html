@@ -16,7 +16,7 @@
     <div x-data="{ main: '{% if product.main_image %}{{ product.main_image.url }}{% endif %}' }">
       <div class="aspect-square bg-white rounded-2xl ring-1 ring-slate-100 grid place-items-center overflow-hidden">
         <template x-if="main"><img :src="main" alt="{{ product.title }}" class="w-full h-full object-contain p-4"></template>
-        {% if not product.main_image %}<div class="text-8xl">{% if product.product_type == 'bike' or product.product_type == 'ebike' %}🚲{% elif product.product_type == 'apparel' %}👕{% else %}🔧{% endif %}</div>{% endif %}
+        {% if not product.main_image %}<div class="text-slate-300">{% icon "box" "w-24 h-24" %}</div>{% endif %}
       </div>
       {% if product.images.count > 1 %}
       <div class="mt-3 flex gap-2 overflow-auto no-scrollbar">
@@ -76,7 +76,7 @@
           <div class="flex flex-wrap gap-2">
             {% for v in variants %}
             <button type="button" @click="variant='{{ v.id }}'"
-                    :class="variant=='{{ v.id }}' ? 'ring-2 ring-brand bg-brand-50' : 'ring-1 ring-slate-200'"
+                    :class="variant=='{{ v.id }}' ? 'ring-2 ring-ink bg-slate-100' : 'ring-1 ring-slate-200'"
                     class="px-3 py-1.5 rounded-lg text-sm font-medium">{{ v.value }}</button>
             {% endfor %}
           </div>
@@ -92,15 +92,15 @@
           <form hx-post="{% url 'cart:add' product.id %}" hx-target="#toast" hx-swap="beforeend" class="flex-1">
             <input type="hidden" name="qty" :value="qty">
             {% if variants %}<input type="hidden" name="variant" :value="variant">{% endif %}
-            <button class="w-full h-12 rounded-xl bg-brand hover:bg-brand-dark text-white font-bold transition">В корзину 🛒</button>
+            <button class="w-full h-12 rounded bg-ink hover:bg-brand-light text-white font-bold uppercase tracking-wide transition flex items-center justify-center gap-2">{% icon "cart" "w-5 h-5" %} В корзину</button>
           </form>
         </div>
 
         <div class="mt-4 grid grid-cols-2 gap-3 text-xs text-slate-500">
-          <div>🚚 Доставка от 1 дня</div>
-          <div>🛡 Гарантия {{ product.warranty_months }} мес.</div>
-          <div>🔧 Бесплатная предпродажная сборка</div>
-          <div>↩️ Возврат 14 дней</div>
+          <div class="flex items-center gap-1.5">{% icon "truck" "w-4 h-4 text-slate-400" %} Доставка от 1 дня</div>
+          <div class="flex items-center gap-1.5">{% icon "shield" "w-4 h-4 text-slate-400" %} Гарантия {{ product.warranty_months }} мес.</div>
+          <div class="flex items-center gap-1.5">{% icon "wrench" "w-4 h-4 text-slate-400" %} Бесплатная сборка</div>
+          <div class="flex items-center gap-1.5">{% icon "return" "w-4 h-4 text-slate-400" %} Возврат 14 дней</div>
         </div>
       </div>
 
@@ -238,7 +238,7 @@
         <div class="space-y-4 mb-8">
           {% for q in questions %}
           <div class="bg-white rounded-2xl ring-1 ring-slate-100 p-5">
-            <div class="font-semibold">❓ {{ q.name }} <span class="text-xs text-slate-400 font-normal">{{ q.created_at|date:"d.m.Y" }}</span></div>
+            <div class="font-semibold">{{ q.name }} <span class="text-xs text-slate-400 font-normal">· {{ q.created_at|date:"d.m.Y" }}</span></div>
             <p class="text-sm text-slate-700 mt-1">{{ q.text }}</p>
             {% for a in q.answers.all %}
             <div class="mt-3 ml-4 pl-3 border-l-2 border-brand">
