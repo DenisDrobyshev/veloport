@@ -1,0 +1,7 @@
+{% load shop_extras %}
+<form hx-post="{% url 'reviews:like' review.id %}" hx-swap="outerHTML" class="inline-block">
+  <button type="submit" {% if review.id in liked_reviews %}disabled{% endif %}
+          class="inline-flex items-center gap-1.5 text-xs font-medium {% if review.id in liked_reviews %}text-accent cursor-default{% else %}text-slate-500 hover:text-accent{% endif %}">
+    {% icon "heart" "w-4 h-4" %} Полезно{% if review.likes %} · {{ review.likes }}{% endif %}
+  </button>
+</form>

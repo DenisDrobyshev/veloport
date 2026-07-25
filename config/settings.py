@@ -181,6 +181,17 @@ SHOP_EMAIL = "hello@veloport.ru"
 FREE_SHIPPING_THRESHOLD = 5000  # бесплатная доставка от суммы, ₽
 
 
+# --- Email ---
+# По умолчанию письма печатаются в консоль (dev). Для прода задайте SMTP в .env.
+EMAIL_BACKEND = os.getenv("EMAIL_BACKEND", "django.core.mail.backends.console.EmailBackend")
+EMAIL_HOST = os.getenv("EMAIL_HOST", "")
+EMAIL_PORT = int(os.getenv("EMAIL_PORT", "587"))
+EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER", "")
+EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD", "")
+EMAIL_USE_TLS = env_bool("EMAIL_USE_TLS", True)
+DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL", "Veloport <noreply@veloport.ru>")
+
+
 # --- Оплата (ЮKassa / YooKassa) ---
 # Задайте ключи в .env, чтобы включить реальную оплату.
 # Если ключей нет — работает demo-режим (имитация оплаты).

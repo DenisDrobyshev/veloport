@@ -219,6 +219,7 @@
             {% if r.pros %}<p class="mt-2 text-sm"><b class="text-brand">+ </b>{{ r.pros }}</p>{% endif %}
             {% if r.cons %}<p class="text-sm"><b class="text-accent">− </b>{{ r.cons }}</p>{% endif %}
             {% if r.text %}<p class="mt-1 text-sm text-slate-700">{{ r.text }}</p>{% endif %}
+            <div class="mt-3 pt-3 border-t border-slate-100">{% include "reviews/_review_likes.html" with review=r %}</div>
           </div>
           {% empty %}
           <p class="text-slate-500">Пока нет отзывов. Будьте первым!</p>

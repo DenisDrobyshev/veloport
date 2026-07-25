@@ -1,0 +1,24 @@
+Здравствуйте, {{ order.first_name }}!
+
+Спасибо за заказ в Veloport. Мы приняли его в работу.
+
+Заказ № {{ order.number }}
+Дата: {{ order.created_at|date:"d.m.Y H:i" }}
+
+Состав заказа:
+{% for item in order.items.all %}- {{ item.title }} × {{ item.qty }} — {{ item.cost }} ₽
+{% endfor %}
+Товары: {{ order.total }} ₽{% if order.discount %}
+Скидка: -{{ order.discount }} ₽{% endif %}{% if order.bonus_used %}
+Бонусами: -{{ order.bonus_used }} ₽{% endif %}
+К оплате: {{ order.payable }} ₽
+
+Способ получения: {{ order.get_delivery_method_display }}
+Оплата: {{ order.get_payment_method_display }}
+{% if order.bonus_earned %}
+На ваш счёт начислено бонусов: {{ order.bonus_earned }}
+{% endif %}
+Мы свяжемся с вами для подтверждения.
+
+С уважением, команда Veloport
+8 800 555-35-35

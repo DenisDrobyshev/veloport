@@ -12,6 +12,8 @@ def service_index(request):
         form = ServiceBookingForm(request.POST)
         if form.is_valid():
             booking = form.save()
+            from apps.core.emails import send_service_booking
+            send_service_booking(booking)
             messages.success(
                 request, f"Записали! Номер заявки {booking.number}. Перезвоним для подтверждения."
             )

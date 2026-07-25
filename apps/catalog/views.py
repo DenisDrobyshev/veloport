@@ -190,6 +190,7 @@ def product_detail(request, slug):
         "stocks": product.stocks.filter(qty__gt=0).select_related("store"),
         "related": related,
         "recent": recent_products(request, exclude_id=product.id, limit=8),
+        "liked_reviews": request.session.get("liked_reviews", []),
     }
     push_recent(request, product.id)
     return render(request, "catalog/product_detail.html", context)

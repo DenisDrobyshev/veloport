@@ -1,0 +1,13 @@
+Здравствуйте, {{ booking.name }}!
+
+Мы приняли вашу заявку в веломастерскую Veloport.
+
+Заявка № {{ booking.number }}
+{% if booking.service_type %}Услуга: {{ booking.service_type.name }}{% endif %}
+{% if booking.bike_info %}Велосипед: {{ booking.bike_info }}{% endif %}
+{% if booking.preferred_date %}Желаемая дата: {{ booking.preferred_date }} {{ booking.preferred_time }}{% endif %}
+
+Мы перезвоним для подтверждения времени.
+
+С уважением, команда Veloport
+8 800 555-35-35

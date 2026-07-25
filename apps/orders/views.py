@@ -12,6 +12,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 
 from apps.cart.cart import Cart
+from apps.core.emails import send_order_confirmation
 from apps.stores.models import Store
 
 from . import payments
@@ -83,6 +84,7 @@ def checkout(request):
                 user.bonus_points = max(0, user.bonus_points - bonus_used + earned)
                 user.save(update_fields=["bonus_points"])
 
+            send_order_confirmation(order)
             cart.clear()
             if order.is_online_payment:
                 return redirect("orders:pay", number=order.number)
