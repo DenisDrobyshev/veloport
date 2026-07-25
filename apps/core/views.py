@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.db.models import Q
 from django.http import HttpResponse
-from django.shortcuts import redirect, render
+from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_POST
 
 from apps.catalog.models import Brand, Category, Product
@@ -28,6 +28,7 @@ def home(request):
         "bike_categories": bike_categories,
         "categories": Category.objects.filter(is_active=True, level=0),
         "brands": Brand.objects.filter(is_active=True, is_featured=True)[:12],
+        "recent": recent_products(request, limit=8),
     }
     return render(request, "core/home.html", context)
 
@@ -190,3 +191,63 @@ def Subscriber_exists(email):
 def contacts(request):
     from apps.stores.models import Store
     return render(request, "core/contacts.html", {"stores": Store.objects.filter(is_active=True)})
+
+
+def robots_txt(request):
+    lines = [
+        "User-agent: *",
+        "Allow: /",
+        "Disallow: /admin/",
+        "Disallow: /cart/",
+        "Disallow: /order/",
+        "Disallow: /account/",
+        f"Sitemap: {request.build_absolute_uri('/sitemap.xml')}",
+    ]
+    return HttpResponse("\n".join(lines), content_type="text/plain")
+
+
+# --- Избранное (wishlist) ---
+
+def _wishlist_ids(request):
+    return request.session.get(settings.WISHLIST_SESSION_ID, [])
+
+
+@require_POST
+def wishlist_toggle(request, product_id):
+    ids = _wishlist_ids(request)
+    if product_id in ids:
+        ids.remove(product_id)
+        added = False
+    else:
+        ids.append(product_id)
+        added = True
+    request.session[settings.WISHLIST_SESSION_ID] = ids
+    request.session.modified = True
+    product = get_object_or_404(Product, id=product_id)
+    if request.htmx:
+        return render(request, "core/_wishlist_button.html", {"product": product, "in_wishlist": added})
+    return redirect(request.META.get("HTTP_REFERER") or "core:home")
+
+
+def wishlist_view(request):
+    ids = _wishlist_ids(request)
+    products = Product.objects.filter(id__in=ids).select_related("brand").prefetch_related("images")
+    by_id = {p.id: p for p in products}
+    ordered = [by_id[i] for i in ids if i in by_id]
+    return render(request, "core/wishlist.html", {"products": ordered})
+
+
+# --- Недавно просмотренные ---
+
+def push_recent(request, product_id):
+    ids = request.session.get(settings.RECENT_SESSION_ID, [])
+    ids = [product_id] + [i for i in ids if i != product_id]
+    request.session[settings.RECENT_SESSION_ID] = ids[:12]
+    request.session.modified = True
+
+
+def recent_products(request, exclude_id=None, limit=8):
+    ids = [i for i in request.session.get(settings.RECENT_SESSION_ID, []) if i != exclude_id]
+    products = Product.objects.filter(id__in=ids).select_related("brand").prefetch_related("images")
+    by_id = {p.id: p for p in products}
+    return [by_id[i] for i in ids if i in by_id][:limit]

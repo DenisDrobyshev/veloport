@@ -15,3 +15,8 @@ def catalog_menu(request):
 def compare_count(request):
     ids = request.session.get(settings.COMPARE_SESSION_ID, [])
     return {"compare_count": len(ids)}
+
+
+def wishlist(request):
+    ids = request.session.get(settings.WISHLIST_SESSION_ID, [])
+    return {"wishlist_ids": ids, "wishlist_count": len(ids)}

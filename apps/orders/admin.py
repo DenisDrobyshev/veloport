@@ -1,7 +1,15 @@
 from django.contrib import admin
 from django.utils.html import format_html
 
-from .models import Order, OrderItem
+from .models import Coupon, Order, OrderItem
+
+
+@admin.register(Coupon)
+class CouponAdmin(admin.ModelAdmin):
+    list_display = ("code", "discount_type", "amount", "min_order_sum", "used_count", "usage_limit", "is_active")
+    list_editable = ("is_active",)
+    list_filter = ("discount_type", "is_active")
+    search_fields = ("code",)
 
 STATUS_COLORS = {
     Order.STATUS_NEW: "#2563eb",
@@ -30,7 +38,8 @@ class OrderAdmin(admin.ModelAdmin):
     list_display = ("number", "full_name", "phone", "status_badge", "delivery_method", "total_fmt", "paid_badge", "created_at")
     list_filter = ("status", "delivery_method", "payment_method", "is_paid", "created_at")
     search_fields = ("number", "first_name", "last_name", "phone", "email")
-    readonly_fields = ("number", "total", "created_at", "updated_at", "payment_id")
+    readonly_fields = ("number", "total", "discount", "bonus_used", "bonus_earned",
+                       "coupon", "created_at", "updated_at", "payment_id")
     inlines = [OrderItemInline]
     date_hierarchy = "created_at"
     list_per_page = 30

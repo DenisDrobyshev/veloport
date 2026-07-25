@@ -312,3 +312,24 @@ class Specification(models.Model):
 
     def __str__(self):
         return f"{self.name}: {self.value}"
+
+
+class StockNotification(models.Model):
+    """Подписка «сообщить о поступлении» товара."""
+
+    product = models.ForeignKey(
+        Product, on_delete=models.CASCADE, related_name="stock_notifications",
+        verbose_name="Товар",
+    )
+    email = models.EmailField("Email")
+    is_notified = models.BooleanField("Уведомлён", default=False)
+    created_at = models.DateTimeField("Создано", auto_now_add=True)
+
+    class Meta:
+        verbose_name = "Подписка на поступление"
+        verbose_name_plural = "Подписки на поступление"
+        unique_together = ("product", "email")
+        ordering = ["-created_at"]
+
+    def __str__(self):
+        return f"{self.email} → {self.product}"

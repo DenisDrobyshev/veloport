@@ -1,0 +1,14 @@
+{% load shop_extras %}
+<form hx-post="{% url 'core:wishlist_toggle' product.id %}" hx-swap="outerHTML">
+  {% if product.id in wishlist_ids %}
+  <button type="submit" title="В избранном"
+          class="h-9 w-9 grid place-items-center rounded-full bg-white/90 backdrop-blur ring-1 text-accent ring-accent transition">
+    {% icon "heart" "w-5 h-5 fill-current" %}
+  </button>
+  {% else %}
+  <button type="submit" title="В избранное"
+          class="h-9 w-9 grid place-items-center rounded-full bg-white/90 backdrop-blur ring-1 text-slate-500 ring-slate-200 hover:text-accent transition">
+    {% icon "heart" "w-5 h-5" %}
+  </button>
+  {% endif %}
+</form>

@@ -1,8 +1,10 @@
+from django.contrib import messages
 from django.core.paginator import Paginator
 from django.db.models import F, Q
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404, redirect, render
+from django.views.decorators.http import require_POST
 
-from .models import Bike, Brand, Category, Product
+from .models import Bike, Brand, Category, Product, StockNotification
 
 SORT_OPTIONS = {
     "popular": ("-is_bestseller", "-rating", "-id"),
@@ -175,6 +177,8 @@ def product_detail(request, slug):
 
     bike = getattr(product, "bike", None)
 
+    from apps.core.views import push_recent, recent_products
+
     context = {
         "product": product,
         "bike": bike,
@@ -185,5 +189,34 @@ def product_detail(request, slug):
         "variants": product.variants.filter(is_active=True),
         "stocks": product.stocks.filter(qty__gt=0).select_related("store"),
         "related": related,
+        "recent": recent_products(request, exclude_id=product.id, limit=8),
     }
+    push_recent(request, product.id)
     return render(request, "catalog/product_detail.html", context)
+
+
+def suggest(request):
+    """Живой поиск (автоподсказки) для шапки."""
+    q = request.GET.get("q", "").strip()
+    products = []
+    if len(q) >= 2:
+        products = (
+            Product.objects.active()
+            .filter(Q(title__icontains=q) | Q(brand__name__icontains=q) | Q(sku__icontains=q))
+            .select_related("brand")
+            .prefetch_related("images")[:6]
+        )
+    return render(request, "catalog/_suggest.html", {"products": products, "q": q})
+
+
+@require_POST
+def stock_notify(request, product_id):
+    """Подписка «сообщить о поступлении»."""
+    product = get_object_or_404(Product, id=product_id, is_active=True)
+    email = request.POST.get("email", "").strip()
+    if email:
+        StockNotification.objects.get_or_create(product=product, email=email)
+    if request.htmx:
+        return render(request, "catalog/_notify_ok.html", {})
+    messages.success(request, "Мы сообщим о поступлении товара")
+    return redirect(product.get_absolute_url())

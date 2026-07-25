@@ -67,9 +67,31 @@
         </div>
         {% endfor %}
       </div>
-      <div class="border-t border-slate-100 pt-3 space-y-2 text-sm">
+      <div class="border-t border-slate-100 pt-4">
+        <label class="text-sm font-semibold text-slate-600">Промокод</label>
+        <div class="flex gap-2 mt-1">
+          <input type="text" name="promo" placeholder="Например, VELO10"
+                 class="flex-1 h-10 px-3 rounded border border-slate-300 text-sm uppercase focus:border-ink outline-none">
+          <button type="button" hx-post="{% url 'orders:coupon_check' %}" hx-include="[name='promo']"
+                  hx-target="#coupon-msg" hx-swap="innerHTML"
+                  class="h-10 px-4 rounded bg-ink hover:bg-brand-light text-white text-sm font-semibold">Применить</button>
+        </div>
+        <div id="coupon-msg"></div>
+      </div>
+
+      {% if user.is_authenticated and user.bonus_points %}
+      <div class="border-t border-slate-100 pt-4 mt-4">
+        <label class="flex items-center justify-between text-sm font-semibold text-slate-600">
+          Списать бонусы <span class="text-slate-400 font-normal">доступно {{ user.bonus_points }}</span>
+        </label>
+        <input type="number" name="use_bonus" min="0" max="{{ user.bonus_points }}" value="0"
+               class="mt-1 w-full h-10 px-3 rounded border border-slate-300 text-sm focus:border-ink outline-none">
+      </div>
+      {% endif %}
+
+      <div class="border-t border-slate-100 pt-3 mt-4 space-y-2 text-sm">
         <div class="flex justify-between"><span class="text-slate-500">Товары</span><span>{{ cart.total|rub }}</span></div>
-        <div class="flex justify-between"><span class="text-slate-500">Доставка</span><span>{% if cart.shipping %}{{ cart.shipping|rub }}{% else %}<span class="text-brand">Бесплатно</span>{% endif %}</span></div>
+        <div class="flex justify-between"><span class="text-slate-500">Доставка</span><span>{% if cart.shipping %}{{ cart.shipping|rub }}{% else %}<span class="text-green-600">Бесплатно</span>{% endif %}</span></div>
       </div>
       <div class="border-t border-slate-100 mt-3 pt-3 flex justify-between items-center">
         <span class="font-semibold">Итого</span><span class="text-2xl font-extrabold">{{ cart.grand_total|rub }}</span>

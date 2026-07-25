@@ -10,6 +10,7 @@ from apps.catalog.images import attach_image
 from apps.catalog.models import Bike, Brand, Category, Product, Specification
 from apps.content.models import FAQ, Article, Page, SizeChart
 from apps.core.models import Banner
+from apps.orders.models import Coupon
 from apps.reviews.models import Answer, Question, Review
 from apps.service.models import ServiceType
 from apps.stores.models import Stock, Store
@@ -344,6 +345,12 @@ class Command(BaseCommand):
 
         Page.objects.create(title="Доставка и оплата", body="Курьер по Москве — от 1 дня. СДЭК по России. Оплата картой онлайн, СБП или при получении.")
         Page.objects.create(title="Гарантия и возврат", body="Гарантия производителя. Возврат в течение 14 дней. Сервисное обслуживание в наших мастерских.")
+
+        # Промокоды
+        Coupon.objects.all().delete()
+        Coupon.objects.create(code="VELO10", discount_type=Coupon.TYPE_PERCENT, amount=10)
+        Coupon.objects.create(code="SPRING1500", discount_type=Coupon.TYPE_FIXED, amount=1500, min_order_sum=30000)
+        self.stdout.write("Промокодов: 2 (VELO10, SPRING1500)")
 
         # Админ
         if not User.objects.filter(username="admin").exists():

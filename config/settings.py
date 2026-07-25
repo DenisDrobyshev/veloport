@@ -41,6 +41,7 @@ DJANGO_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "django.contrib.humanize",
+    "django.contrib.sitemaps",
 ]
 
 THIRD_PARTY_APPS = [
@@ -94,6 +95,7 @@ TEMPLATES = [
                 "apps.cart.context_processors.cart",
                 "apps.core.context_processors.catalog_menu",
                 "apps.core.context_processors.compare_count",
+                "apps.core.context_processors.wishlist",
             ],
         },
     },
@@ -156,6 +158,9 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 # --- Cart ---
 CART_SESSION_ID = "cart"
 COMPARE_SESSION_ID = "compare"
+WISHLIST_SESSION_ID = "wishlist"
+RECENT_SESSION_ID = "recent"
+BONUS_ACCRUAL_RATE = 0.03  # начисление бонусов от суммы заказа
 
 
 # --- DRF (задел под API/сервисы) ---
@@ -206,6 +211,8 @@ JAZZMIN_SETTINGS = {
         "catalog.Brand": "fas fa-tag",
         "catalog.Product": "fas fa-bicycle",
         "orders.Order": "fas fa-shopping-cart",
+        "orders.Coupon": "fas fa-percent",
+        "catalog.StockNotification": "fas fa-bell",
         "reviews.Review": "fas fa-star",
         "reviews.Question": "fas fa-question-circle",
         "stores.Store": "fas fa-store",

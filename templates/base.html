@@ -6,6 +6,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{% block title %}Veloport — велосипеды и спортивный инвентарь{% endblock %}</title>
   <meta name="description" content="{% block meta_description %}Veloport — магазин велосипедов, экипировки и аксессуаров. Умный подбор, доставка, веломастерская.{% endblock %}">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Veloport">
+  <meta property="og:title" content="{% block og_title %}Veloport — велосипеды с умным подбором{% endblock %}">
+  <meta property="og:description" content="{% block og_description %}Магазин велосипедов, экипировки и аксессуаров. Умный подбор, честное наличие, веломастерская.{% endblock %}">
+  {% block og_image %}{% endblock %}
 
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
@@ -46,8 +51,9 @@
         <a href="{% url 'core:contacts' %}" class="hover:text-white transition hidden sm:inline">Контакты</a>
       </div>
       <div class="flex items-center gap-5">
+        <a href="{% url 'orders:track' %}" class="hover:text-white transition hidden md:inline">Отследить заказ</a>
         <a href="{% url 'content:guides' %}" class="hover:text-white transition hidden md:inline">Гайды и размеры</a>
-        <a href="{% url 'service:tradein' %}" class="hover:text-white transition hidden md:inline">Trade-in</a>
+        <a href="{% url 'service:tradein' %}" class="hover:text-white transition hidden sm:inline">Trade-in</a>
         <a href="tel:88005553535" class="flex items-center gap-1.5 font-semibold text-white">{% icon "phone" "w-4 h-4 text-accent" %} 8 800 555-35-35</a>
       </div>
     </div>
@@ -84,14 +90,19 @@
         </div>
       </div>
 
-      <!-- Поиск -->
-      <form action="{% url 'catalog:list' %}" method="get" class="flex-1 max-w-2xl">
+      <!-- Поиск с автоподсказками -->
+      <form action="{% url 'catalog:list' %}" method="get" class="flex-1 max-w-2xl" x-data="{ open: false }" @click.away="open = false">
         <div class="relative">
-          <input type="text" name="q" value="{{ request.GET.q }}" placeholder="Поиск по каталогу: велосипед, бренд, артикул…"
+          <input type="text" name="q" value="{{ request.GET.q }}" autocomplete="off"
+                 placeholder="Поиск по каталогу: велосипед, бренд, артикул…"
+                 hx-get="{% url 'catalog:suggest' %}" hx-trigger="keyup changed delay:250ms"
+                 hx-target="#search-suggest" hx-swap="innerHTML"
+                 @focus="open = true" @keyup="open = true"
                  class="w-full h-11 pl-4 pr-12 rounded border border-slate-300 focus:border-ink focus:ring-1 focus:ring-ink outline-none text-sm">
           <button type="submit" class="absolute right-1 top-1 h-9 w-10 grid place-items-center rounded bg-accent hover:bg-accent-dark text-white">
             {% icon "search" "w-5 h-5" %}
           </button>
+          <div id="search-suggest" x-show="open" x-cloak></div>
         </div>
       </form>
 
@@ -103,6 +114,10 @@
         <a href="{% url 'core:compare' %}" title="Сравнение" class="relative flex flex-col items-center gap-0.5 px-2 hover:text-accent transition">
           {% icon "compare" "w-6 h-6" %}<span class="text-[11px] font-medium hidden md:block">Сравнить</span>
           {% if compare_count %}<span class="absolute -top-1 right-0 bg-accent text-white text-[10px] font-bold rounded-full h-4 min-w-4 px-1 grid place-items-center">{{ compare_count }}</span>{% endif %}
+        </a>
+        <a href="{% url 'core:wishlist' %}" title="Избранное" class="relative flex flex-col items-center gap-0.5 px-2 hover:text-accent transition">
+          {% icon "heart" "w-6 h-6" %}<span class="text-[11px] font-medium hidden md:block">Избранное</span>
+          {% if wishlist_count %}<span class="absolute -top-1 right-0 bg-accent text-white text-[10px] font-bold rounded-full h-4 min-w-4 px-1 grid place-items-center">{{ wishlist_count }}</span>{% endif %}
         </a>
         <a href="{% url 'accounts:profile' %}" title="Кабинет" class="flex flex-col items-center gap-0.5 px-2 hover:text-accent transition">
           {% icon "user" "w-6 h-6" %}<span class="text-[11px] font-medium hidden md:block">Кабинет</span>

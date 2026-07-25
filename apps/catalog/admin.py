@@ -10,7 +10,16 @@ from .models import (
     ProductImage,
     ProductVariant,
     Specification,
+    StockNotification,
 )
+
+
+@admin.register(StockNotification)
+class StockNotificationAdmin(admin.ModelAdmin):
+    list_display = ("email", "product", "is_notified", "created_at")
+    list_filter = ("is_notified",)
+    search_fields = ("email", "product__title")
+    autocomplete_fields = ("product",)
 
 
 def _thumb(url, h=44):

@@ -11,6 +11,8 @@ urlpatterns = [
     path("compare/remove/<int:product_id>/", views.compare_remove, name="compare_remove"),
     path("compare/clear/", views.compare_clear, name="compare_clear"),
     path("fit/", views.fit_finder, name="fit_finder"),
+    path("wishlist/", views.wishlist_view, name="wishlist"),
+    path("wishlist/toggle/<int:product_id>/", views.wishlist_toggle, name="wishlist_toggle"),
     path("subscribe/", views.subscribe, name="subscribe"),
     path("contacts/", views.contacts, name="contacts"),
 ]

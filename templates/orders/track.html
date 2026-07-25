@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% load shop_extras %}
+{% block title %}Отслеживание заказа — Veloport{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto px-4 py-10">
+  <h1 class="text-2xl md:text-3xl font-black uppercase tracking-tight mb-2">Отслеживание заказа</h1>
+  <p class="text-slate-500 mb-6">Введите номер заказа и телефон, указанный при оформлении.</p>
+
+  <form method="get" class="bg-white border border-slate-200 rounded-xl p-5 grid sm:grid-cols-[1fr_1fr_auto] gap-3 items-end">
+    <div>
+      <label class="text-sm font-semibold text-slate-600">Номер заказа</label>
+      <input name="number" value="{{ number }}" placeholder="VP-12345678" class="mt-1 w-full h-11 px-3 rounded border border-slate-300 focus:border-ink outline-none">
+    </div>
+    <div>
+      <label class="text-sm font-semibold text-slate-600">Телефон</label>
+      <input name="phone" value="{{ phone }}" placeholder="+7 999 000-11-22" class="mt-1 w-full h-11 px-3 rounded border border-slate-300 focus:border-ink outline-none">
+    </div>
+    <button class="h-11 px-6 rounded bg-accent hover:bg-accent-dark text-white font-bold uppercase tracking-wide">Найти</button>
+  </form>
+
+  {% if searched %}
+    {% if order %}
+    <div class="mt-6 bg-white border border-slate-200 rounded-xl p-6">
+      <div class="flex items-center justify-between flex-wrap gap-2">
+        <div class="font-bold text-lg">Заказ № {{ order.number }}</div>
+        <div class="font-black">{{ order.payable|rub }}</div>
+      </div>
+      <div class="text-sm text-slate-400">от {{ order.created_at|date:"d.m.Y H:i" }}</div>
+
+      {% if timeline %}
+      <div class="mt-6 flex items-center">
+        {% for step in timeline %}
+        <div class="flex items-center {% if not forloop.last %}flex-1{% endif %}">
+          <div class="flex flex-col items-center">
+            <div class="h-8 w-8 grid place-items-center rounded-full text-xs font-bold {% if step.reached %}bg-accent text-white{% else %}bg-slate-100 text-slate-400{% endif %}">
+              {% if step.reached %}{% icon "check" "w-4 h-4" %}{% else %}{{ forloop.counter }}{% endif %}
+            </div>
+            <div class="text-[11px] mt-1 text-center w-16 {% if step.current %}font-bold text-ink{% else %}text-slate-400{% endif %}">{{ step.label }}</div>
+          </div>
+          {% if not forloop.last %}<div class="flex-1 h-0.5 -mt-4 {% if step.reached %}bg-accent{% else %}bg-slate-100{% endif %}"></div>{% endif %}
+        </div>
+        {% endfor %}
+      </div>
+      {% else %}
+      <div class="mt-4 inline-block bg-slate-100 rounded-full px-3 py-1 text-sm font-semibold">{{ order.get_status_display }}</div>
+      {% endif %}
+
+      <div class="mt-6 border-t border-slate-100 pt-4 space-y-2 text-sm">
+        {% for item in order.items.all %}
+        <div class="flex justify-between"><span class="text-slate-600">{{ item.title }} × {{ item.qty }}</span><span>{{ item.cost|rub }}</span></div>
+        {% endfor %}
+      </div>
+    </div>
+    {% else %}
+    <div class="mt-6 bg-white border border-slate-200 rounded-xl py-12 text-center">
+      <p class="font-bold">Заказ не найден</p>
+      <p class="text-slate-500 text-sm mt-1">Проверьте номер заказа и телефон.</p>
+    </div>
+    {% endif %}
+  {% endif %}
+</div>
+{% endblock %}

@@ -2,9 +2,63 @@ from decimal import Decimal
 
 from django.conf import settings
 from django.db import models
+from django.utils import timezone
 from django.utils.crypto import get_random_string
 
 from apps.core.models import TimeStampedModel
+
+
+class Coupon(models.Model):
+    """Промокод: скидка процентом или фиксированной суммой."""
+
+    TYPE_PERCENT = "percent"
+    TYPE_FIXED = "fixed"
+    TYPES = [(TYPE_PERCENT, "Процент, %"), (TYPE_FIXED, "Фиксированная сумма, ₽")]
+
+    code = models.CharField("Код", max_length=32, unique=True)
+    discount_type = models.CharField("Тип скидки", max_length=8, choices=TYPES, default=TYPE_PERCENT)
+    amount = models.DecimalField("Значение", max_digits=10, decimal_places=2)
+    min_order_sum = models.DecimalField("Мин. сумма заказа", max_digits=10, decimal_places=2, default=0)
+    valid_from = models.DateTimeField("Действует с", null=True, blank=True)
+    valid_until = models.DateTimeField("Действует до", null=True, blank=True)
+    usage_limit = models.PositiveIntegerField("Лимит использований", null=True, blank=True, help_text="Пусто = без лимита")
+    used_count = models.PositiveIntegerField("Использовано раз", default=0)
+    is_active = models.BooleanField("Активен", default=True)
+
+    class Meta:
+        verbose_name = "Промокод"
+        verbose_name_plural = "Промокоды"
+        ordering = ["-id"]
+
+    def __str__(self):
+        return self.code
+
+    def save(self, *args, **kwargs):
+        self.code = self.code.strip().upper()
+        super().save(*args, **kwargs)
+
+    def validate_for(self, cart_total):
+        """Возвращает (ok, сообщение)."""
+        now = timezone.now()
+        if not self.is_active:
+            return False, "Промокод неактивен"
+        if self.valid_from and now < self.valid_from:
+            return False, "Промокод ещё не действует"
+        if self.valid_until and now > self.valid_until:
+            return False, "Срок действия промокода истёк"
+        if self.usage_limit and self.used_count >= self.usage_limit:
+            return False, "Лимит использований исчерпан"
+        if cart_total < self.min_order_sum:
+            return False, f"Минимальная сумма заказа {int(self.min_order_sum)} ₽"
+        return True, "Промокод применён"
+
+    def discount_for(self, amount) -> Decimal:
+        amount = Decimal(amount)
+        if self.discount_type == self.TYPE_PERCENT:
+            value = amount * self.amount / Decimal("100")
+        else:
+            value = self.amount
+        return min(value, amount).quantize(Decimal("1"))
 
 
 class Order(TimeStampedModel):
@@ -77,6 +131,13 @@ class Order(TimeStampedModel):
     )
     is_paid = models.BooleanField("Оплачен", default=False)
     payment_id = models.CharField("ID платежа (ЮKassa)", max_length=64, blank=True)
+    coupon = models.ForeignKey(
+        "orders.Coupon", on_delete=models.SET_NULL, null=True, blank=True,
+        related_name="orders", verbose_name="Промокод",
+    )
+    discount = models.DecimalField("Скидка по промокоду", max_digits=10, decimal_places=2, default=0)
+    bonus_used = models.PositiveIntegerField("Списано бонусов", default=0)
+    bonus_earned = models.PositiveIntegerField("Начислено бонусов", default=0)
     comment = models.TextField("Комментарий", blank=True)
     status = models.CharField("Статус", max_length=12, choices=STATUSES, default=STATUS_NEW)
     total = models.DecimalField("Сумма", max_digits=10, decimal_places=2, default=0)
@@ -109,6 +170,12 @@ class Order(TimeStampedModel):
     @property
     def full_name(self) -> str:
         return f"{self.first_name} {self.last_name}".strip()
+
+    @property
+    def payable(self) -> Decimal:
+        """Итого к оплате: товары − скидка − бонусы (не ниже нуля)."""
+        value = self.total - self.discount - Decimal(self.bonus_used)
+        return value if value > 0 else Decimal("0")
 
     @property
     def is_online_payment(self) -> bool:
