@@ -15,4 +15,5 @@ urlpatterns = [
     path("wishlist/toggle/<int:product_id>/", views.wishlist_toggle, name="wishlist_toggle"),
     path("subscribe/", views.subscribe, name="subscribe"),
     path("contacts/", views.contacts, name="contacts"),
+    path("dashboard/", views.dashboard, name="dashboard"),
 ]

@@ -84,6 +84,13 @@ def checkout(request):
                 user.bonus_points = max(0, user.bonus_points - bonus_used + earned)
                 user.save(update_fields=["bonus_points"])
 
+            if user and request.POST.get("save_address") and order.city:
+                from apps.accounts.models import Address
+                Address.objects.get_or_create(
+                    user=user, city=order.city, street=order.street, house=order.house,
+                    defaults={"apartment": order.apartment, "postal_code": order.postal_code},
+                )
+
             send_order_confirmation(order)
             cart.clear()
             if order.is_online_payment:

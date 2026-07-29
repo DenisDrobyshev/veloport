@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+{% load shop_extras %}
+{% block title %}Дашборд — Veloport{% endblock %}
+
+{% block content %}
+<div class="max-w-8xl mx-auto px-4 py-8">
+  <div class="flex items-center justify-between mb-6">
+    <h1 class="text-2xl md:text-3xl font-black uppercase tracking-tight">Дашборд</h1>
+    <a href="/admin/" class="h-10 px-4 leading-[40px] rounded border border-slate-200 font-semibold text-sm">Админка</a>
+  </div>
+
+  <!-- KPI -->
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
+    <div class="bg-ink text-white rounded-xl p-5">
+      <div class="text-xs uppercase tracking-widest text-white/60">Выручка (оплачено)</div>
+      <div class="text-2xl font-black mt-1">{{ revenue|rub }}</div>
+    </div>
+    <div class="bg-white border border-slate-200 rounded-xl p-5">
+      <div class="text-xs uppercase tracking-widest text-slate-400">Заказов</div>
+      <div class="text-2xl font-black mt-1">{{ total_orders }}</div>
+      <div class="text-xs text-slate-400 mt-1">оплачено: {{ paid_count }}</div>
+    </div>
+    <div class="bg-white border border-slate-200 rounded-xl p-5">
+      <div class="text-xs uppercase tracking-widest text-slate-400">Средний чек</div>
+      <div class="text-2xl font-black mt-1">{{ avg_check|rub }}</div>
+    </div>
+    <div class="bg-white border border-slate-200 rounded-xl p-5">
+      <div class="text-xs uppercase tracking-widest text-slate-400">Товары / Отзывы</div>
+      <div class="text-2xl font-black mt-1">{{ products_count }} <span class="text-slate-300">/</span> {{ reviews_count }}</div>
+      <div class="text-xs text-accent mt-1">{{ subs_pending }} ждут поступления</div>
+    </div>
+  </div>
+
+  <div class="grid lg:grid-cols-3 gap-4">
+    <!-- Заказы за 7 дней -->
+    <div class="lg:col-span-2 bg-white border border-slate-200 rounded-xl p-6">
+      <h2 class="font-bold mb-4">Заказы за 7 дней</h2>
+      <div class="flex items-end gap-3 h-48">
+        {% for d in days %}
+        <div class="flex-1 flex flex-col items-center justify-end gap-2">
+          <div class="text-xs font-bold text-slate-500">{{ d.count }}</div>
+          <div class="w-full bg-accent rounded-t" style="height: {% widthratio d.count max_count 160 %}px; min-height: 4px;"></div>
+          <div class="text-[11px] text-slate-400">{{ d.label }}</div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- Статусы -->
+    <div class="bg-white border border-slate-200 rounded-xl p-6">
+      <h2 class="font-bold mb-4">Заказы по статусам</h2>
+      <div class="space-y-2 text-sm">
+        {% for s in status_rows %}
+        <div class="flex justify-between"><span class="text-slate-600">{{ s.label }}</span><span class="font-bold">{{ s.count }}</span></div>
+        {% empty %}<p class="text-slate-400">Заказов пока нет</p>{% endfor %}
+      </div>
+    </div>
+  </div>
+
+  <div class="grid lg:grid-cols-2 gap-4 mt-4">
+    <!-- Топ товаров -->
+    <div class="bg-white border border-slate-200 rounded-xl p-6">
+      <h2 class="font-bold mb-4">Топ товаров по продажам</h2>
+      <div class="space-y-2 text-sm">
+        {% for t in top_products %}
+        <div class="flex justify-between"><span class="text-slate-600 line-clamp-1 pr-2">{{ t.title }}</span><span class="font-bold whitespace-nowrap">{{ t.qty }} шт</span></div>
+        {% empty %}<p class="text-slate-400">Нет данных о продажах</p>{% endfor %}
+      </div>
+    </div>
+
+    <!-- Мало на складе -->
+    <div class="bg-white border border-slate-200 rounded-xl p-6">
+      <h2 class="font-bold mb-4">Заканчиваются на складе</h2>
+      <div class="space-y-2 text-sm">
+        {% for p in low_stock %}
+        <a href="{{ p.get_absolute_url }}" class="flex justify-between hover:text-accent"><span class="line-clamp-1 pr-2">{{ p.title }}</span><span class="font-bold {% if p.stock_qty == 0 %}text-red-500{% else %}text-amber-500{% endif %} whitespace-nowrap">{{ p.stock_qty }} шт</span></a>
+        {% empty %}<p class="text-slate-400">Всё в достатке</p>{% endfor %}
+      </div>
+    </div>
+  </div>
+
+  <!-- Последние заказы -->
+  <div class="bg-white border border-slate-200 rounded-xl p-6 mt-4">
+    <h2 class="font-bold mb-4">Последние заказы</h2>
+    <div class="overflow-x-auto">
+      <table class="min-w-full text-sm">
+        <thead class="text-left text-slate-400">
+          <tr><th class="py-2 pr-4">Номер</th><th class="py-2 pr-4">Клиент</th><th class="py-2 pr-4">Статус</th><th class="py-2 pr-4">Оплата</th><th class="py-2 text-right">Сумма</th></tr>
+        </thead>
+        <tbody class="divide-y divide-slate-100">
+          {% for o in recent_orders %}
+          <tr>
+            <td class="py-2 pr-4 font-semibold">{{ o.number }}</td>
+            <td class="py-2 pr-4">{{ o.full_name }}</td>
+            <td class="py-2 pr-4">{{ o.get_status_display }}</td>
+            <td class="py-2 pr-4">{% if o.is_paid %}<span class="text-green-600">оплачен</span>{% else %}<span class="text-slate-400">нет</span>{% endif %}</td>
+            <td class="py-2 text-right font-bold">{{ o.payable|rub }}</td>
+          </tr>
+          {% empty %}<tr><td colspan="5" class="py-4 text-slate-400">Заказов пока нет</td></tr>{% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

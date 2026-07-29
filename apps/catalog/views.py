@@ -196,6 +196,22 @@ def product_detail(request, slug):
     return render(request, "catalog/product_detail.html", context)
 
 
+REVIEW_SORTS = {"new": "-created_at", "helpful": "-likes", "high": "-rating", "low": "rating"}
+
+
+def product_reviews(request, slug):
+    """Отзывы товара с сортировкой и пагинацией (HTMX)."""
+    product = get_object_or_404(Product, slug=slug, is_active=True)
+    rsort = request.GET.get("rsort", "new")
+    order = REVIEW_SORTS.get(rsort, "-created_at")
+    qs = product.reviews.filter(is_published=True).select_related("author").order_by(order, "-id")
+    page = Paginator(qs, 5).get_page(request.GET.get("rpage"))
+    return render(request, "catalog/_reviews.html", {
+        "product": product, "page_obj": page, "reviews": page.object_list,
+        "rsort": rsort, "liked_reviews": request.session.get("liked_reviews", []),
+    })
+
+
 def suggest(request):
     """Живой поиск (автоподсказки) для шапки."""
     q = request.GET.get("q", "").strip()

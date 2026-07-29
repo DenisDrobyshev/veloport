@@ -73,6 +73,7 @@ def compare(request):
             ("Вес, кг", [bike_attr(p, lambda b: b.weight_kg or "—") for p in products]),
             ("Рейтинг", [f"{p.rating} ★" for p in products]),
         ]
+    rows = [(label, values, len({str(v) for v in values}) > 1) for label, values in rows]
     return render(request, "core/compare.html", {"products": products, "rows": rows})
 
 
@@ -191,6 +192,63 @@ def Subscriber_exists(email):
 def contacts(request):
     from apps.stores.models import Store
     return render(request, "core/contacts.html", {"stores": Store.objects.filter(is_active=True)})
+
+
+def dashboard(request):
+    """Аналитический дашборд для персонала."""
+    from datetime import timedelta
+
+    from django.contrib.admin.views.decorators import staff_member_required
+    from django.db.models import Count, Sum
+    from django.utils import timezone
+
+    from apps.catalog.models import Product, StockNotification
+    from apps.orders.models import Order, OrderItem
+    from apps.reviews.models import Review
+
+    if not request.user.is_staff:
+        from django.contrib.auth.views import redirect_to_login
+        return redirect_to_login(request.get_full_path())
+
+    orders = Order.objects.all()
+    paid = list(orders.filter(is_paid=True))
+    revenue = sum((o.payable for o in paid), 0)
+    paid_count = len(paid)
+
+    status_labels = dict(Order.STATUSES)
+    status_rows = [
+        {"label": status_labels.get(r["status"], r["status"]), "count": r["c"]}
+        for r in orders.values("status").annotate(c=Count("id")).order_by("-c")
+    ]
+
+    top_products = list(
+        OrderItem.objects.values("title").annotate(qty=Sum("qty")).order_by("-qty")[:6]
+    )
+    low_stock = list(Product.objects.filter(is_active=True, stock_qty__lte=2).order_by("stock_qty")[:8])
+
+    today = timezone.localdate()
+    days = []
+    for i in range(6, -1, -1):
+        d = today - timedelta(days=i)
+        days.append({"label": d.strftime("%d.%m"), "count": orders.filter(created_at__date=d).count()})
+    max_count = max((x["count"] for x in days), default=0) or 1
+
+    ctx = {
+        "total_orders": orders.count(),
+        "paid_count": paid_count,
+        "revenue": revenue,
+        "avg_check": int(revenue / paid_count) if paid_count else 0,
+        "products_count": Product.objects.count(),
+        "reviews_count": Review.objects.count(),
+        "subs_pending": StockNotification.objects.filter(is_notified=False).count(),
+        "status_rows": status_rows,
+        "top_products": top_products,
+        "low_stock": low_stock,
+        "days": days,
+        "max_count": max_count,
+        "recent_orders": orders.order_by("-created_at")[:8],
+    }
+    return render(request, "core/dashboard.html", ctx)
 
 
 def robots_txt(request):

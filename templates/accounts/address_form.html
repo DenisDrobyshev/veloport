@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% load widget_tweaks %}
+{% block title %}Новый адрес — Veloport{% endblock %}
+
+{% block content %}
+<div class="max-w-md mx-auto px-4 py-12">
+  <div class="bg-white border border-slate-200 rounded-2xl p-8">
+    <h1 class="text-2xl font-black uppercase tracking-tight mb-6">Новый адрес</h1>
+    <form method="post" class="space-y-3">
+      {% csrf_token %}
+      <div><label class="text-sm text-slate-500">Город</label>{% render_field form.city class="w-full h-11 px-3 rounded border border-slate-300 focus:border-ink outline-none" %}</div>
+      <div><label class="text-sm text-slate-500">Улица</label>{% render_field form.street class="w-full h-11 px-3 rounded border border-slate-300 focus:border-ink outline-none" %}</div>
+      <div class="grid grid-cols-3 gap-2">
+        <div><label class="text-sm text-slate-500">Дом</label>{% render_field form.house class="w-full h-11 px-3 rounded border border-slate-300 focus:border-ink outline-none" %}</div>
+        <div><label class="text-sm text-slate-500">Кв.</label>{% render_field form.apartment class="w-full h-11 px-3 rounded border border-slate-300 focus:border-ink outline-none" %}</div>
+        <div><label class="text-sm text-slate-500">Индекс</label>{% render_field form.postal_code class="w-full h-11 px-3 rounded border border-slate-300 focus:border-ink outline-none" %}</div>
+      </div>
+      <label class="flex items-center gap-2 text-sm">{% render_field form.is_default class="accent-accent w-4 h-4" %} Использовать по умолчанию</label>
+      <div class="flex gap-2 pt-1">
+        <button class="h-11 px-6 rounded bg-ink hover:bg-brand-light text-white font-semibold uppercase tracking-wide text-sm">Сохранить</button>
+        <a href="{% url 'accounts:profile' %}" class="h-11 px-6 leading-[44px] rounded border border-slate-200 font-semibold text-sm">Отмена</a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

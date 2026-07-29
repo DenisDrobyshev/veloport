@@ -4,37 +4,88 @@
 
 {% block content %}
 <div class="max-w-5xl mx-auto px-4 py-8">
-  <div class="flex items-center justify-between mb-6">
+  <div class="flex items-center justify-between flex-wrap gap-3 mb-6">
     <div>
-      <h1 class="text-2xl md:text-3xl font-extrabold">Привет, {{ user.first_name|default:user.username }}!</h1>
-      <p class="text-slate-500 text-sm mt-1">Бонусных баллов: <b class="text-brand">{{ user.bonus_points }}</b></p>
+      <h1 class="text-2xl md:text-3xl font-black uppercase tracking-tight">Привет, {{ user.first_name|default:user.username }}!</h1>
+      <p class="text-slate-500 text-sm mt-1">{{ user.email }}</p>
     </div>
     <div class="flex gap-2">
-      <a href="{% url 'accounts:profile_edit' %}" class="h-10 px-4 leading-[40px] rounded-xl ring-1 ring-slate-200 font-medium text-sm">Настройки</a>
-      <form method="post" action="{% url 'accounts:logout' %}">{% csrf_token %}<button class="h-10 px-4 rounded-xl ring-1 ring-slate-200 font-medium text-sm text-slate-500">Выйти</button></form>
+      <a href="{% url 'accounts:profile_edit' %}" class="h-10 px-4 leading-[40px] rounded border border-slate-200 font-semibold text-sm">Настройки</a>
+      <form method="post" action="{% url 'accounts:logout' %}">{% csrf_token %}<button class="h-10 px-4 rounded border border-slate-200 font-semibold text-sm text-slate-500">Выйти</button></form>
     </div>
   </div>
 
-  <h2 class="font-bold text-lg mb-3">Мои заказы</h2>
+  <!-- Бонусы -->
+  <div class="grid grid-cols-3 gap-3 mb-8">
+    <div class="bg-ink text-white rounded-xl p-5">
+      <div class="text-xs uppercase tracking-widest text-white/60">Баланс бонусов</div>
+      <div class="text-3xl font-black mt-1">{{ user.bonus_points }}</div>
+    </div>
+    <div class="bg-white border border-slate-200 rounded-xl p-5">
+      <div class="text-xs uppercase tracking-widest text-slate-400">Начислено</div>
+      <div class="text-3xl font-black mt-1 text-green-600">+{{ bonus_earned }}</div>
+    </div>
+    <div class="bg-white border border-slate-200 rounded-xl p-5">
+      <div class="text-xs uppercase tracking-widest text-slate-400">Потрачено</div>
+      <div class="text-3xl font-black mt-1 text-accent">−{{ bonus_spent }}</div>
+    </div>
+  </div>
+
+  <!-- Адреса -->
+  <div class="flex items-center justify-between mb-3">
+    <h2 class="font-black text-lg uppercase tracking-tight">Адреса доставки</h2>
+    <a href="{% url 'accounts:address_add' %}" class="text-sm font-semibold text-accent hover:text-accent-dark inline-flex items-center gap-1">{% icon "plus" "w-4 h-4" %} Добавить</a>
+  </div>
+  {% if addresses %}
+  <div class="grid sm:grid-cols-2 gap-3 mb-8">
+    {% for a in addresses %}
+    <div class="bg-white border border-slate-200 rounded-xl p-4 flex items-start justify-between">
+      <div>
+        <div class="font-semibold text-sm">{{ a.full }}{% if a.is_default %} <span class="text-xs text-accent">· по умолчанию</span>{% endif %}</div>
+      </div>
+      <form method="post" action="{% url 'accounts:address_delete' a.id %}">{% csrf_token %}<button class="text-slate-300 hover:text-accent" title="Удалить">{% icon "x" "w-4 h-4" %}</button></form>
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <p class="text-slate-500 text-sm mb-8">Сохранённых адресов нет — добавьте, чтобы оформлять заказы быстрее.</p>
+  {% endif %}
+
+  <!-- Подписки на поступление -->
+  {% if subscriptions %}
+  <h2 class="font-black text-lg uppercase tracking-tight mb-3">Подписки на поступление</h2>
+  <div class="space-y-2 mb-8">
+    {% for s in subscriptions %}
+    <a href="{{ s.product.get_absolute_url }}" class="flex items-center justify-between bg-white border border-slate-200 rounded-lg px-4 py-2.5 hover:border-ink">
+      <span class="font-medium text-sm">{{ s.product.title }}</span>
+      <span class="text-xs {% if s.is_notified %}text-green-600{% else %}text-slate-400{% endif %}">{% if s.is_notified %}в наличии{% else %}ждём поступления{% endif %}</span>
+    </a>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  <!-- Заказы -->
+  <h2 class="font-black text-lg uppercase tracking-tight mb-3">Мои заказы</h2>
   {% if orders %}
   <div class="space-y-3">
     {% for order in orders %}
-    <div class="bg-white rounded-2xl ring-1 ring-slate-100 p-5">
+    <div class="bg-white border border-slate-200 rounded-xl p-5">
       <div class="flex items-center justify-between flex-wrap gap-2">
         <div>
           <div class="font-semibold">Заказ № {{ order.number }}</div>
           <div class="text-xs text-slate-400">{{ order.created_at|date:"d.m.Y H:i" }}</div>
         </div>
         <span class="text-xs font-semibold px-3 py-1 rounded-full bg-slate-100 text-slate-700">{{ order.get_status_display }}</span>
-        <div class="font-bold">{{ order.total|rub }}</div>
+        <div class="font-black">{{ order.payable|rub }}</div>
       </div>
       <div class="mt-3 text-sm text-slate-500">{% for item in order.items.all %}{{ item.title }} × {{ item.qty }}{% if not forloop.last %}, {% endif %}{% endfor %}</div>
+      {% if order.bonus_earned %}<div class="mt-1 text-xs text-accent">+{{ order.bonus_earned }} бонусов</div>{% endif %}
     </div>
     {% endfor %}
   </div>
   {% else %}
   <div class="bg-white border border-slate-200 rounded-xl py-16 text-center">
-    <span class="inline-grid place-items-center text-slate-300">{% load shop_extras %}{% icon "box" "w-12 h-12" %}</span>
+    <span class="inline-grid place-items-center text-slate-300">{% icon "box" "w-12 h-12" %}</span>
     <p class="mt-3 text-slate-500">У вас пока нет заказов</p>
     <a href="{% url 'catalog:list' %}" class="inline-flex items-center mt-4 h-11 px-6 rounded bg-ink hover:bg-brand-light text-white font-semibold uppercase tracking-wide text-sm">В каталог</a>
   </div>

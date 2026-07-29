@@ -10,6 +10,10 @@
   </div>
 
   {% if products %}
+  <div x-data="{ onlyDiff: false }">
+  <label class="inline-flex items-center gap-2 mb-4 text-sm font-semibold cursor-pointer">
+    <input type="checkbox" x-model="onlyDiff" class="accent-accent w-4 h-4"> Показывать только отличия
+  </label>
   <div class="overflow-x-auto bg-white rounded-2xl ring-1 ring-slate-100">
     <table class="min-w-full text-sm">
       <thead>
@@ -30,14 +34,15 @@
         </tr>
       </thead>
       <tbody class="divide-y divide-slate-100">
-        {% for label, values in rows %}
-        <tr class="{% cycle '' 'bg-slate-50/50' %}">
-          <td class="sticky left-0 bg-inherit p-4 font-medium text-slate-500 w-40">{{ label }}</td>
+        {% for label, values, differ in rows %}
+        <tr x-show="!onlyDiff || {% if differ %}true{% else %}false{% endif %}" class="{% if differ %}bg-accent/5{% endif %}">
+          <td class="sticky left-0 {% if differ %}bg-accent/5{% else %}bg-white{% endif %} p-4 font-medium {% if differ %}text-ink{% else %}text-slate-500{% endif %} w-40">{{ label }}</td>
           {% for v in values %}<td class="p-4 border-l border-slate-100 font-medium">{{ v }}</td>{% endfor %}
         </tr>
         {% endfor %}
       </tbody>
     </table>
+  </div>
   </div>
   {% else %}
   <div class="bg-white border border-slate-200 rounded-xl py-20 text-center">

@@ -1,0 +1,21 @@
+{% load shop_extras %}
+{% for review in reviews %}
+<div class="bg-white rounded-2xl ring-1 ring-slate-100 p-5">
+  <div class="flex items-center justify-between">
+    <div class="font-semibold">{{ review.name }}</div>
+    <div class="text-amber-500 text-sm">{{ review.rating|stars }}</div>
+  </div>
+  <div class="text-xs text-slate-400">{{ review.created_at|date:"d.m.Y" }}</div>
+  {% if review.pros %}<p class="mt-2 text-sm"><b class="text-green-600">+ </b>{{ review.pros }}</p>{% endif %}
+  {% if review.cons %}<p class="text-sm"><b class="text-accent">− </b>{{ review.cons }}</p>{% endif %}
+  {% if review.text %}<p class="mt-1 text-sm text-slate-700">{{ review.text }}</p>{% endif %}
+  <div class="mt-3 pt-3 border-t border-slate-100">{% include "reviews/_review_likes.html" %}</div>
+</div>
+{% empty %}
+<p class="text-slate-500">Пока нет отзывов. Будьте первым!</p>
+{% endfor %}
+{% if page_obj.has_next %}
+<button hx-get="{% url 'catalog:product_reviews' product.slug %}?rsort={{ rsort }}&rpage={{ page_obj.next_page_number }}"
+        hx-swap="outerHTML" hx-target="this"
+        class="w-full h-11 rounded border border-slate-300 hover:border-ink font-semibold text-sm">Показать ещё отзывы</button>
+{% endif %}

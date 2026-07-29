@@ -211,6 +211,7 @@ JAZZMIN_SETTINGS = {
     "user_avatar": None,
     "topmenu_links": [
         {"name": "Открыть сайт", "url": "/", "new_window": True},
+        {"name": "Дашборд", "url": "/dashboard/"},
         {"name": "Заказы", "model": "orders.order"},
         {"name": "Товары", "model": "catalog.product"},
     ],
