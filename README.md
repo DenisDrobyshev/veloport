@@ -1,17 +1,11 @@
 # Veloport
 
-**Интернет-магазин велосипедов и спортивного инвентаря** на Django — монолит с
-чистой модульной архитектурой и заделом под вынос в микросервисы.
+Интернет-магазин велосипедов и спортивного инвентаря на Django. Монолит разделён на
+модули так, чтобы их можно было вынести в отдельные сервисы.
 
-Полноценный e-commerce с фокусом на удобство: умный подбор велосипеда, мощный
-фасетный фильтр, сравнение моделей, честное наличие по магазинам с онлайн-резервом,
-веломастерская, trade-in, промокоды, бонусы и аналитический дашборд.
-
-![Python](https://img.shields.io/badge/Python-3.12-3776AB?logo=python&logoColor=white)
-![Django](https://img.shields.io/badge/Django-4.2-092E20?logo=django&logoColor=white)
-![Tests](https://img.shields.io/badge/tests-68%20passed-16a34a)
-![Docker](https://img.shields.io/badge/Docker-ready-2496ED?logo=docker&logoColor=white)
-![Style](https://img.shields.io/badge/HTMX%20%2B%20Tailwind-UI-0d9488)
+Есть подбор велосипеда по параметрам, фасетный фильтр, сравнение моделей, наличие
+по магазинам с онлайн-резервом, запись в веломастерскую, trade-in, промокоды, бонусы
+и аналитический дашборд.
 
 ![Главная](docs/screenshots/home.jpg)
 
